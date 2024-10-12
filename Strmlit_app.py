@@ -971,7 +971,7 @@ elif position == 'Winger':
 
 # Extract league average values
     league_avg_values = {
-    'Successful attacking actions per 90': league_avg_row['Pressing Ability per 90'].values[0],
+    'Successful attacking actions per 90': league_avg_row['Successful attacking actions per 90'].values[0],
     'Shots on Target per 90': league_avg_row['Shots on Target per 90'].values[0],
     'Accurate Crosses per 90': league_avg_row['Accurate Crosses per 90'].values[0],
     'Successful dribbles, %': league_avg_row['Successful dribbles, %'].values[0]
