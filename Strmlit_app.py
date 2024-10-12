@@ -1401,7 +1401,7 @@ elif position == 'CF':
     df_position2=df_filtered2.drop(columns=[ 'Team','Position',
                         'Matches played', 'Minutes played','Age',
                        'CF Score(0-100)', 'Player Rank', 'CF zscore','Goals', 'Aerial duels per 90', 'Aerial duels won, %',
-       'Shots per 90','Shots on target, %',
+       'Shots per 90','Shots on target, %','xG',
        'Received passes per 90', 'Received long passes per 90',
        'Fouls suffered per 90'
                                           ])
