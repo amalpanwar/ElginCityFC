@@ -1272,10 +1272,10 @@ elif position == 'CF':
     original_metrics =[
        'Aerial duels won per 90',
        'Successful attacking actions per 90', 'Goals per 90', 'xG per 90',
-       'Shots on Target per 90', 'Successful dribbles per 90', 'Touches in box per 90',
+       'Shots on Target per 90', 'Successful dribbles, %', 'Touches in box per 90',
        'Recieve long pass, %','Goal threat per 90',
        'Fouls suffered per 90']
-    weights=[1,1,1.25,1.1,1,1,1.1,0.9,1,0.9]
+    weights=[1,1,1.25,1.1,1,1,1.1,0.8,1.1,0.9]
     weighted_metrics = pd.DataFrame()
     
     df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
@@ -1398,7 +1398,7 @@ elif position == 'CF':
     
 
     # Create radar chart for selected players
-    df_position2=df_filtered2.drop(columns=[ 'Team','Contract Expiry \n(Trnsfmkt)',
+    df_position2=df_filtered2.drop(columns=[ 'Team','Position',
                         'Matches played', 'Minutes played','Age',
                        'CF Score(0-100)', 'Player Rank', 'CF zscore','Goals', 'Aerial duels per 90', 'Aerial duels won, %',
        'Shots per 90','Shots on target, %', 'Dribbles per 90',
@@ -1421,13 +1421,14 @@ elif position == 'CF':
     Team = df_filtered_guage['Team'].tolist()
     Matches=df_filtered_guage['Matches played'].tolist()
     Minutes=df_filtered_guage['Minutes played'].tolist()
+    Position=df_filtered_guage['Position'].tolist()
 
     for i in range(0, len(players), 3):  # 3 charts per row
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(players):
                 with cols[j]:
-                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],league_average_rating)
+                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],Position[i + j],league_average_rating)
                     st.plotly_chart(fig)
 
 
