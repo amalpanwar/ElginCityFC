@@ -265,7 +265,7 @@ def create_gauge_chart(player_name, rating, rank, age, team, matches_played, min
     ))
     # Adjust layout to handle the extra text and space
     fig.update_layout(
-        height=400,  # Adjust height to accommodate more text
+        height=350,  # Adjust height to accommodate more text
         width=300, 
         margin=dict(t=50, b=0, l=0, r=0)  # Top margin to give space for title
     )
