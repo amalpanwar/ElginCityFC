@@ -1275,7 +1275,7 @@ elif position == 'CF':
         'Successful dribbles, %',
        'Recieve long pass, %','Goal threat per 90',
        'Fouls suffered per 90']
-    weights=[0.8,1,1.25,1.1,1,0.8,1.1,0.8]
+    weights=[0.8,1,1.5,1.2,1,0.8,1.1,0.8]
     weighted_metrics = pd.DataFrame()
     
     df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
