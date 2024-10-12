@@ -606,7 +606,7 @@ if position == 'CM':
                 logging.error(f"Error: {str(e)}")
     
 
-######################################################Center Back#############################################    
+###################################################### CB: Center Back #############################################    
 elif position == 'CB':
     df_position = pvt_df_CB
 
@@ -736,8 +736,8 @@ elif position == 'CB':
   
 
     # Create radar chart for selected players
-    df_position2=df_filtered2.drop(columns=[ 'defensive zscore','Defender Score(0-100)','Player Rank','Team','Contract Expiry \n(Trnsfmkt)','Age',
-                        'Matches played\n(23/24)','Minutes played','Defensive duels per 90', 'Defensive duels won, %',
+    df_position2=df_filtered2.drop(columns=[ 'defensive zscore','Defender Score(0-100)','Player Rank','Team','Position','Age',
+                        'Matches played','Minutes played','Defensive duels per 90', 'Defensive duels won, %',
        'Aerial duels per 90', 'Aerial duels won, %', 'Passes to final third per 90',
        'Accurate passes to final third, %', 'Progressive passes per 90',
        'Accurate progressive passes, %'])
@@ -753,15 +753,16 @@ elif position == 'CB':
     ranks = df_filtered_guage['Player Rank'].tolist()
     Age = df_filtered_guage['Age'].tolist()
     Team = df_filtered_guage['Team'].tolist()
-    Matches=df_filtered_guage['Matches played\n(23/24)'].tolist()
+    Matches=df_filtered_guage['Matches played'].tolist()
     Minutes=df_filtered_guage['Minutes played'].tolist()
+    Position=df_filtered_guage['Position'].tolist()
 
     for i in range(0, len(players), 3):  # 3 charts per row
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(players):
                 with cols[j]:
-                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],league_average_rating)
+                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],Position[i + j],league_average_rating)
                     st.plotly_chart(fig)
 
 
