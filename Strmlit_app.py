@@ -920,13 +920,12 @@ elif position == 'Winger':
        'Successful attacking actions per 90',
        'Goals per 90', 'Shots on Target per 90', 'Assists per 90',
        'Accurate Crosses per 90', 'Successful dribbles, %',
-       'Pressing Ability per 90', 'Fouls suffered per 90', 'Accurate Passes per 90',
-       'Accurate passes to penalty area, %']
-    weights=[1,1.25,1,1.25,1,1.1,1.2,1,1,1]    
+       'Offensive duels per 90','Progressive runs per 90' 'Fouls suffered per 90', 'Accurate Passes per 90']
+    weights=[1,1.1,1,1.25,1,1.1,1,1,1,1]    
     weighted_metrics = pd.DataFrame()
     df_position['Shots on Target per 90'] = df_position['Shots per 90'] * (df_position['Shots on target, %'] / 100)
-    df_position['Offensive duels won per 90'] = df_position['Offensive duels per 90'] * (df_position['Offensive duels won, %'] / 100)
-    df_position['Pressing Ability per 90']= df_position['Offensive duels won per 90'] + df_position['Progressive runs per 90']
+    #df_position['Offensive duels won per 90'] = df_position['Offensive duels per 90'] * (df_position['Offensive duels won, %'] / 100)
+    #df_position['Pressing Ability per 90']= df_position['Offensive duels won per 90'] + df_position['Progressive runs per 90']
     df_position['Accurate Passes per 90'] = df_position['Passes per 90'] * (df_position['Accurate passes, %'] / 100)
     df_position['Accurate Crosses per 90'] = df_position['Crosses per 90'] * (df_position['Accurate crosses, %'] / 100)
     
@@ -965,37 +964,32 @@ elif position == 'Winger':
    
 
     df_filtered2=df_filtered.reset_index()
-    df_filtered2['Shots on Target per 90'] = df_filtered2['Shots per 90'] * (df_filtered2['Shots on target, %'] / 100)
-    df_filtered2['Offensive duels won per 90'] = df_filtered2['Offensive duels per 90'] * (df_filtered2['Offensive duels won, %'] / 100)
-    df_filtered2['Pressing Ability per 90']= df_filtered2['Offensive duels won per 90'] + df_filtered2['Progressive runs per 90']
-
+    
     df_filtered_new=df_position.reset_index()
-    df_filtered_new['Shots on Target per 90'] = df_filtered_new['Shots per 90'] * (df_filtered_new['Shots on target, %'] / 100)
-    df_filtered_new['Offensive duels won per 90'] = df_filtered_new['Offensive duels per 90'] * (df_filtered_new['Offensive duels won, %'] / 100)
-    df_filtered_new['Pressing Ability per 90']= df_filtered_new['Offensive duels won per 90'] + df_filtered_new['Progressive runs per 90']
+    
     league_avg_row = df_filtered_new[df_filtered_new['Player'] == 'League Two Average']
 
 # Extract league average values
     league_avg_values = {
-    'Pressing Ability per 90': league_avg_row['Pressing Ability per 90'].values[0],
+    'Successful attacking actions per 90': league_avg_row['Pressing Ability per 90'].values[0],
     'Shots on Target per 90': league_avg_row['Shots on Target per 90'].values[0],
-    'Goals per 90': league_avg_row['Goals per 90'].values[0],
-    'Assists per 90': league_avg_row['Assists per 90'].values[0]
+    'Accurate Crosses per 90': league_avg_row['Accurate Crosses per 90'].values[0],
+    'Successful dribbles, %': league_avg_row['Successful dribbles, %'].values[0]
       }
 # get max value for X and Y to create quadrants
-    x_max = df_filtered_new['Pressing Ability per 90'].max()
+    x_max = df_filtered_new['Successful attacking actions per 90'].max()
     y_max_values = {
     'Shots on Target per 90': df_filtered_new['Shots on Target per 90'].max(),
-    'Goals per 90': df_filtered_new['Goals per 90'].max(),
-    'Assists per 90': df_filtered_new['Assists per 90'].max()
+    'Accurate Crosses per 90': df_filtered_new['Accurate Crosses per 90'].max(),
+    'Successful dribbles, %': df_filtered_new['Successful dribbles, %'].max()
            }
     
 
    
-    fig = px.scatter(df_filtered2, x='Pressing Ability per 90', y=['Shots on Target per 90','Goals per 90', 'Assists per 90'], facet_col='variable',
+    fig = px.scatter(df_filtered2, x='Successful attacking actions per 90', y=['Shots on Target per 90','Accurate Crosses per 90', 'Successful dribbles, %'], facet_col='variable',
                  facet_col_spacing=0.08, color='Player', title='Pressing Threats vs Final Action')
 
-    for i, facet_name in enumerate(['Shots on Target per 90','Goals per 90', 'Assists per 90']):
+    for i, facet_name in enumerate(['Shots on Target per 90','Accurate Crosses per 90', 'Successful dribbles, %']):
         # Add horizontal line
         fig.add_shape(
         go.layout.Shape(
@@ -1015,9 +1009,9 @@ elif position == 'Winger':
         fig.add_shape(
         go.layout.Shape(
             type='line',
-            x0=league_avg_values['Pressing Ability per 90'],
+            x0=league_avg_values['Successful attacking actions per 90'],
             y0=0,
-            x1=league_avg_values['Pressing Ability per 90'],
+            x1=league_avg_values['Successful attacking actions per 90'],
             y1=y_max_values[facet_name],
             xref=f'x{i+1}',
             yref=f'y{i+1}',
