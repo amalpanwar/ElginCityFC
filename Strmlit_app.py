@@ -984,9 +984,11 @@ elif position == 'Winger':
     'Successful dribbles, %': df_filtered_new['Successful dribbles, %'].max()
            }
     
-
+    
+    df_filtered2 = df_filtered2.rename(columns={
+                                                'Successful attacking actions per 90': 'Successful Attck. Action/90'})
    
-    fig = px.scatter(df_filtered2, x='Successful attacking actions per 90', y=['Shots on Target per 90','Accurate Crosses per 90', 'Successful dribbles, %'], facet_col='variable',
+    fig = px.scatter(df_filtered2, x='Successful Attck. Action/90', y=['Shots on Target per 90','Accurate Crosses per 90', 'Successful dribbles, %'], facet_col='variable',
                  facet_col_spacing=0.08, color='Player', title='Pressing Threats vs Final Action')
 
     for i, facet_name in enumerate(['Shots on Target per 90','Accurate Crosses per 90', 'Successful dribbles, %']):
