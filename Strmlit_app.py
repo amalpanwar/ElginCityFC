@@ -1034,12 +1034,11 @@ elif position == 'Winger':
     
    
     # Create radar chart for selected players
-    df_position2=df_filtered.drop(columns=[ 'Contract Expiry \n(Trnsfmkt)', 'Age', 'Matches played','Team',
-       'Minutes played', 'wing zscore','wing Score(0-100)', 'Player Rank',
+    df_position2=df_filtered.drop(columns=[ 'Position', 'Age', 'Matches played','Team',
+       'Minutes played', 'wing zscore','wing Score(0-100)', 'Player Rank','Goals',
         'Assists','Shots per 90', 'Shots on target, %', 
-       'Crosses per 90', 'Accurate crosses, %', 'Successful dribbles, %',
-       'Offensive duels per 90', 'Offensive duels won, %',
-       'Progressive runs per 90',  'Passes per 90',
+       'Crosses per 90', 'Accurate crosses, %', 
+        'Passes per 90',
        'Accurate passes, %' ])
                               
     radar_fig =create_radar_chart(df_position2, players_Wing, id_column='Player', title=f'Radar Chart for Selected {position} (Default: League Average)')
@@ -1056,29 +1055,30 @@ elif position == 'Winger':
     Team = df_filtered_guage['Team'].tolist()
     Matches=df_filtered_guage['Matches played'].tolist()
     Minutes=df_filtered_guage['Minutes played'].tolist()
+    Position=df_filtered_guage['Position'].tolist()
 
     for i in range(0, len(players), 3):  # 3 charts per row
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(players):
                 with cols[j]:
-                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],league_average_rating)
+                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],Position[i + j],league_average_rating)
                     st.plotly_chart(fig)
 
 
     
     league_avg_values2 = {
     'Fouls suffered per 90': league_avg_row['Fouls suffered per 90'].values[0],
-    'Pressing Ability per 90': league_avg_row['Pressing Ability per 90'].values[0],
-    'Successful dribbles, %': league_avg_row['Successful dribbles, %'].values[0],
+    'Offensive duels per 90': league_avg_row['Offensive duels per 90'].values[0],
+    'Progressive runs per 90': league_avg_row['Progressive runs per 90'].values[0],
           }
     x_min, x_max = df_filtered_new['Fouls suffered per 90'].min(), df_filtered_new['Fouls suffered per 90'].max()
-    y_min, y_max = df_filtered_new['Pressing Ability per 90'].min(), df_filtered_new['Pressing Ability per 90'].max()
-    y_min_drib, y_max_drib = df_filtered_new['Successful dribbles, %'].min(), df_filtered_new['Successful dribbles, %'].max()
+    y_min, y_max = df_filtered_new['Offensive duels per 90'].min(), df_filtered_new['Offensive duels per 90'].max()
+    y_min_drib, y_max_drib = df_filtered_new['Progressive runs per 90'].min(), df_filtered_new['Progressive runs per 90'].max()
     # Create the subplots
     fig_drib = make_subplots(
     rows=1, cols=2, shared_xaxes=True,
-    subplot_titles=['Pressing Ability vs Foul suffered', 'Successful dribbles, % vs Foul suffered'],
+    subplot_titles=['Progressive runs vs Foul suffered','Offensive duels vs Foul suffered'],
     specs=[[{"secondary_y": True}, {"secondary_y": True}]]
      )
 
@@ -1091,7 +1091,7 @@ elif position == 'Winger':
         fig_drib.add_trace(
             go.Scatter(
             x=player_data['Fouls suffered per 90'],
-            y=player_data['Pressing Ability per 90'],
+            y=player_data['Progressive runs per 90'],
             mode='markers',
             marker=dict(color=color_sequence[i % len(color_sequence)]),
             name=player,
@@ -1105,9 +1105,9 @@ elif position == 'Winger':
             go.layout.Shape(
         type='line',
         x0=x_min,
-        y0=league_avg_values2['Pressing Ability per 90'], 
+        y0=league_avg_values2['Progressive runs per 90'], 
         x1=x_max,
-        y1=league_avg_values2['Pressing Ability per 90'],
+        y1=league_avg_values2['Progressive runs per 90'],
         line=dict(color='red', width=1, dash='dash'),
         xref='x',
         yref='y',
@@ -1134,7 +1134,7 @@ elif position == 'Winger':
         fig_drib.add_trace(
            go.Scatter(
                x=player_data['Fouls suffered per 90'],
-               y=player_data['Successful dribbles, %'],
+               y=player_data['Offensive duels per 90'],
                mode='markers',
                marker=dict(color=color_sequence[i % len(color_sequence)]),
                name=player,
@@ -1148,9 +1148,9 @@ elif position == 'Winger':
             go.layout.Shape(
         type='line',
         x0=x_min,
-        y0=league_avg_values2['Successful dribbles, %'], 
+        y0=league_avg_values2['Offensive duels per 90'], 
         x1=x_max,
-        y1=league_avg_values2['Successful dribbles, %'],
+        y1=league_avg_values2['Offensive duels per 90'],
         line=dict(color='red', width=1, dash='dash'),
         xref='x',
         yref='y',
@@ -1177,8 +1177,8 @@ elif position == 'Winger':
     
     fig_drib.update_xaxes(title_text="Fouls suffered per 90")
 
-    fig_drib.update_yaxes(title_text="Pressing Ability per 90", row=1, col=1)
-    fig_drib.update_yaxes(title_text="Successful dribbles, %", row=1, col=2)
+    fig_drib.update_yaxes(title_text="Progressive runs per 90", row=1, col=1)
+    fig_drib.update_yaxes(title_text="Offensive duels per 90", row=1, col=2)
     fig_drib.update_traces(marker=dict(size=8))
 
 # Display the plot in Streamlit
@@ -1187,7 +1187,7 @@ elif position == 'Winger':
 
     
 
-    df_filtered2['Overall attacking strength'] = df_filtered2['Goals per 90'] + df_filtered2['Assists per 90'] + df_filtered2['Accurate Crosses per 90']
+    df_filtered2['Overall Threats'] = df_filtered2['Goals per 90'] + df_filtered2['Assists per 90'] + df_filtered2['Shots on Target per 90']
 
 # Sorting the DataFrame by 'Goals + Assists per 90', 'Goals per 90', and 'Assists per 90' in descending order
     df_filtered3 = df_filtered2.sort_values(by=['Overall attacking strength'], ascending=False)
@@ -1196,10 +1196,10 @@ elif position == 'Winger':
     # df_filtered2 = df_filtered2.sort_values(by=('Aerial duels won, %', ascending=False)
 
     # Melt the dataframe to long format for stacking
-    df_melted = df_filtered3.melt(id_vars='Player', value_vars=['Accurate Crosses per 90', 'Assists per 90','Goals per 90'], var_name='Metric', value_name='Value')
+    df_melted = df_filtered3.melt(id_vars='Player', value_vars=['Shots on Target per 90', 'Assists per 90','Goals per 90'], var_name='Metric', value_name='Value')
 
     # Create stacked bar chart
-    fig3 = px.bar(df_melted, x='Value', y='Player', color='Metric', orientation='h', title=f'{position} Attacking Action')
+    fig3 = px.bar(df_melted, x='Value', y='Player', color='Metric', orientation='h', title=f'{position} Overall Threats on Goal')
     st.plotly_chart(fig3)
 
     # Input for user query
