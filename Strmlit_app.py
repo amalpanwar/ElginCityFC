@@ -612,9 +612,9 @@ elif position == 'CB':
 
     original_metrics =[
        'Successful defensive actions per 90', 'Defensive duels won per 90',
-        'Aerial duels won per 90','PAdj Sliding tackles', 'Shots blocked per 90', 'Interceptions per 90',
+        'Aerial duels won per 90','PAdj Sliding tackles', 'Shots blocked per 90',
        'PAdj Interceptions', 'Fouls per 90', 'Accurate passes to final third/90','Accurate progressive passes/90']
-    weights=[1,1.25,1,1,1,1,1,-1.25,0.8,0.8]
+    weights=[1,1.25,1,1,1,1,-1.25,0.8,0.8]
     weighted_metrics = pd.DataFrame()
     df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
     df_position['Defensive duels won per 90'] = df_position['Defensive duels per 90'] * (df_position['Defensive duels won, %'] / 100)
