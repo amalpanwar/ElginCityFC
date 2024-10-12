@@ -1118,9 +1118,9 @@ elif position == 'Winger':
             go.layout.Shape(
         type='line',
         x0=league_avg_values2['Fouls suffered per 90'], 
-        y0=y_min,
+        y0=y_min_drib,
         x1=league_avg_values2['Fouls suffered per 90'],
-        y1=y_max,
+        y1=y_max_drib,
         line=dict(color='blue', width=1, dash='dash'),
         xref='x',
         yref='y',
@@ -1162,9 +1162,9 @@ elif position == 'Winger':
             go.layout.Shape(
         type='line',
         x0=league_avg_values2['Fouls suffered per 90'], 
-        y0=y_min_drib,
+        y0=y_min,
         x1=league_avg_values2['Fouls suffered per 90'],
-        y1=y_max_drib,
+        y1=y_max,
         line=dict(color='blue', width=1, dash='dash'),
         xref='x',
         yref='y',
@@ -1190,7 +1190,7 @@ elif position == 'Winger':
     df_filtered2['Overall Threats'] = df_filtered2['Goals per 90'] + df_filtered2['Assists per 90'] + df_filtered2['Shots on Target per 90']
 
 # Sorting the DataFrame by 'Goals + Assists per 90', 'Goals per 90', and 'Assists per 90' in descending order
-    df_filtered3 = df_filtered2.sort_values(by=['Overall attacking strength'], ascending=False)
+    df_filtered3 = df_filtered2.sort_values(by=['Overall Threats'], ascending=False)
 
 
     # df_filtered2 = df_filtered2.sort_values(by=('Aerial duels won, %', ascending=False)
