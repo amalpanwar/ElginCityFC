@@ -1270,9 +1270,9 @@ elif position == 'CF':
     # Dropdown menu for player selection based on position
 
     original_metrics =[
-       'Aerial duels won per 90',
+       'Aerial duels won, %',
        'Successful attacking actions per 90', 'Goals per 90', 'xG per 90',
-       'Shots on Target per 90', 'Successful dribbles, %', 'Touches in box per 90',
+       'Shots on target, %', 'Successful dribbles, %', 'Touches in box per 90',
        'Recieve long pass, %','Goal threat per 90',
        'Fouls suffered per 90']
     weights=[1,1,1.25,1.1,1,1,1.1,0.8,1.1,0.9]
