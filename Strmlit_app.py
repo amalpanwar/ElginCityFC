@@ -920,7 +920,7 @@ elif position == 'Winger':
        'Successful attacking actions per 90',
        'Goals per 90', 'Shots on Target per 90', 'Assists per 90',
        'Accurate Crosses per 90', 'Successful dribbles, %',
-       'Offensive duels per 90','Progressive runs per 90' 'Fouls suffered per 90', 'Accurate Passes per 90']
+       'Offensive duels per 90','Progressive runs per 90', 'Fouls suffered per 90', 'Accurate Passes per 90']
     weights=[1,1.1,1,1.25,1,1.1,1,1,1,1]    
     weighted_metrics = pd.DataFrame()
     df_position['Shots on Target per 90'] = df_position['Shots per 90'] * (df_position['Shots on target, %'] / 100)
