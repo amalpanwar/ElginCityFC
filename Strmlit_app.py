@@ -1280,7 +1280,7 @@ elif position == 'CF':
     
     df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
     df_position['Shots on Target per 90'] = df_position['Shots per 90'] * (df_position['Shots on target, %'] / 100)
-    df_position['Successful dribbles per 90']= df_position['Dribbles per 90'] + df_position['Successful dribbles, %']
+    #df_position['Successful dribbles per 90']= df_position['Dribbles per 90'] + df_position['Successful dribbles, %']
     df_position['Recieve long pass, %']= (df_position['Received long passes per 90'] / df_position['Received passes per 90']) * 100
     df_position['Goal threat per 90'] = 2 * ((df_position['Touches in box per 90'] + 1) * (df_position['Shots on Target per 90'] + 1)) / ((df_position['Touches in box per 90'] + 1) + (df_position['Shots on Target per 90'] + 1))
 
@@ -1401,8 +1401,7 @@ elif position == 'CF':
     df_position2=df_filtered2.drop(columns=[ 'Team','Position',
                         'Matches played', 'Minutes played','Age',
                        'CF Score(0-100)', 'Player Rank', 'CF zscore','Goals', 'Aerial duels per 90', 'Aerial duels won, %',
-       'Shots per 90','Shots on target, %', 'Dribbles per 90',
-       'Successful dribbles, %', 
+       'Shots per 90','Shots on target, %',
        'Received passes per 90', 'Received long passes per 90',
        'Fouls suffered per 90'
                                           ])
