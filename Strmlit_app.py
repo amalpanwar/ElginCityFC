@@ -2165,7 +2165,7 @@ elif position == 'CAM':
                                                 + df_position['Accurate passes to penalty area, %'] * 0.3
                                                 + df_position['Accurate progressive passes, %'] * 0.2)
     
-   df_position = standardize_and_score_football_metrics(df_position, original_metrics, weights)
+    df_position = standardize_and_score_football_metrics(df_position, original_metrics, weights)
 
     if st.sidebar.button('Show Top 5 Players'):
         df_position_reset = df_position.reset_index()
