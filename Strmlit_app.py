@@ -2151,7 +2151,7 @@ elif position == 'CAM':
 
     original_metrics =[
         'Defensive duels won per 90', 'Successful attacking actions per 90',
-       'Shots on Target per 90', 'Successful dribbles, %',
+       'Shots per 90', 'Successful dribbles, %',
        'Offensive duels won, %', 'Progressive runs per 90',
        'Received passes per 90', 'Overall Passing Skills, %']
     weights=[0.8,1,1,1,1,1,0.8,1.2]
@@ -2159,7 +2159,7 @@ elif position == 'CAM':
     
     #df_position['Assists per 90'] = ((df_position['Assists'] / df_position['Minutes played']) * 90).round(2)
     df_position['Defensive duels won per 90'] = df_position['Defensive duels per 90'] * (df_position['Defensive duels won, %'] / 100)
-    df_position['Shots on Target per 90'] = df_position['Shots per 90'] * (df_position['Shots on target, %'] / 100)
+    #df_position['Shots on Target per 90'] = df_position['Shots per 90'] * (df_position['Shots on target, %'] / 100)
     df_position['Overall Passing Skills, %'] = (df_position['Accurate forward passes, %'] * 0.2 + 
                                                 df_position['Accurate passes to final third, %'] * 0.3
                                                 + df_position['Accurate passes to penalty area, %'] * 0.3
