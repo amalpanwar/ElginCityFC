@@ -1577,8 +1577,8 @@ elif position == 'GK':
 
     original_metrics =[
        'Conceded goals per 90','xG against per 90','Prevented goals per 90',
-       'Clean sheets', 'Save rate, %', 'Exits per 90', 'Aerial duels per 90']
-    weights=[-1.25,-1,1.2,1.25,1,1,1]
+        'Save rate, %', 'Exits per 90', 'Aerial duels per 90']
+    weights=[-1.25,-1,1.25,1.1,1,1]
     weighted_metrics = pd.DataFrame()
     df_position['Saved Goal']= df_position['Shots against'] - df_position['Conceded goals']
     df_position['Saved Goal per 90']= (df_position['Saved Goal'] / df_position['Minutes played']) * 90
@@ -1720,17 +1720,17 @@ elif position == 'GK':
     
     
     league_avg_values2 = {
+    'xG against per 90': league_avg_row['xG against per 90'].values[0],
     'Prevented goals per 90': league_avg_row['Prevented goals per 90'].values[0],
-    'Save rate, %': league_avg_row['Save rate, %'].values[0],
-    'Matches played': league_avg_row['Matches played'].values[0],
-    'Clean sheets': league_avg_row['Clean sheets'].values[0]
+    'Prevented goals per 90': league_avg_row['Prevented goals per 90'].values[0],
+    'Save rate, %': league_avg_row['Save rate, %'].values[0]
           }
 
     # calculate min, max for the quadrants
-    x_min, x_max = df_filtered_new['Prevented goals per 90'].min(), df_filtered_new['Prevented goals per 90'].max()
-    y_min, y_max = df_filtered_new['Save rate, %'].min(), df_filtered_new['Save rate, %'].max()
-    x_min_mp, x_max_mp = df_filtered_new['Matches played'].min(), df_filtered_new['Matches played'].max()
-    y_min_cs, y_max_cs = df_filtered_new['Clean sheets'].min(), df_filtered_new['Clean sheets'].max()
+    y_min, y_max = df_filtered_new['Prevented goals per 90'].min(), df_filtered_new['Prevented goals per 90'].max()
+    x_min, x_max = df_filtered_new['xG against per 90'].min(), df_filtered_new['xG against per 90'].max()
+    x_min_mp, x_max_mp = df_filtered_new['Prevented goals per 90'].min(), df_filtered_new['Prevented goals per 90'].max()
+    y_min_cs, y_max_cs = df_filtered_new['Save rate, %'].min(), df_filtered_new['Save rate, %'].max()
 
     fig2 = px.scatter(df_filtered.reset_index(), x='Prevented goals per 90', y='Save rate, %',
                      color='Player', title=f'{position} Saving Strength')
@@ -1741,9 +1741,9 @@ elif position == 'GK':
     go.layout.Shape(
         type='line',
         x0=x_min,
-        y0=league_avg_values2['Save rate, %'], 
+        y0=league_avg_values2['Prevented goals per 90'], 
         x1=x_max,
-        y1=league_avg_values2['Save rate, %'],
+        y1=league_avg_values2['Prevented goals per 90'],
         line=dict(color='red', width=1, dash='dash'),
         xref='x',
         yref='y',
@@ -1753,9 +1753,9 @@ elif position == 'GK':
     fig2.add_shape(
     go.layout.Shape(
         type='line',
-        x0=league_avg_values2['Prevented goals per 90'], 
+        x0=league_avg_values2['xG against per 90'], 
         y0=y_min,
-        x1=league_avg_values2['Prevented goals per 90'],
+        x1=league_avg_values2['xG against per 90'],
         y1=y_max,
         line=dict(color='blue', width=1, dash='dash'),
         xref='x',
@@ -1776,9 +1776,9 @@ elif position == 'GK':
     go.layout.Shape(
         type='line',
         x0=x_min_mp,
-        y0=league_avg_values2['Clean sheets'], 
+        y0=league_avg_values2['Save rate, %'], 
         x1=x_max_mp,
-        y1=league_avg_values2['Clean sheets'],
+        y1=league_avg_values2['Save rate, %'],
         line=dict(color='red', width=1, dash='dash'),
         xref='x',
         yref='y',
@@ -1788,9 +1788,9 @@ elif position == 'GK':
     fig3.add_shape(
     go.layout.Shape(
         type='line',
-        x0=league_avg_values2['Matches played'], 
+        x0=league_avg_values2['Prevented goals per 90'], 
         y0=y_min_cs,
-        x1=league_avg_values2['Matches played'],
+        x1=league_avg_values2['Prevented goals per 90'],
         y1=y_max_cs,
         line=dict(color='blue', width=1, dash='dash'),
         xref='x',
