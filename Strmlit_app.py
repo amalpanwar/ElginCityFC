@@ -271,17 +271,66 @@ def create_gauge_chart(player_name, rating, rank, age, team, matches_played, min
     )
     return fig
 
-# RAG Pipeline for Chatting
-AI21_api_key = st.sidebar.text_input('Together API Key')
-api_token = st.sidebar.text_input('API Key', type='password')
+
+#****************************************************** Zscore *************************************************
+def standardize_and_score_football_metrics(df, metrics, weights=None):
+    # Automatically categorize metrics
+    percent_metrics = [col for col in metrics if '%' in col]
+    per90_metrics = [col for col in metrics if col not in percent_metrics]
+    
+    # If weights are not provided, use equal weights
+    if weights is None:
+        weights = [1] * len(metrics)
+    
+    # Ensure weights match the number of metrics
+    assert len(metrics) == len(weights), "Number of metrics and weights must match"
+    
+    # Function to calculate distance from 50% for percentage metrics
+    def distance_from_50(x):
+        return abs(x - 50) / 50  # Normalized distance from 50%
+    
+    # Standardize and weight metrics
+    standardized_metrics = pd.DataFrame()
+    for metric, weight in zip(metrics, weights):
+        if metric in percent_metrics:
+            standardized_metrics[metric] = df[metric].apply(distance_from_50) * weight
+        else:  # per90 metrics
+            mean = df[metric].mean()
+            std = df[metric].std()
+            standardized_metrics[metric] = ((df[metric] - mean) / std) * weight
+    
+    # Calculate final score
+    df["Score"] = standardized_metrics.mean(axis=1)
+    
+    # Normalize the final score to a 0-100 scale
+    min_score = df["Score"].min()
+    max_score = df["Score"].max()
+    df["Score(0-100)"] = ((df["Score"] - min_score) / (max_score - min_score) * 100).round(2)
+    
+    # Calculate player rank
+    df['Rank'] = df['Score(0-100)'].rank(ascending=False)
+    
+    return df
+
 
 
 
 # Streamlit app
+
+# ******************* RAG Pipeline for Chatting ********************************
+AI21_api_key = st.sidebar.text_input('Together API Key')
+api_token = st.sidebar.text_input('API Key', type='password')
+
+
+#  ****************** Title ****************************
 st.title('Player Performance Dashboard')
 
+# ******************* Position selection ********************************************************
 default_position_index = ["GK","FB","CB","CM","CAM","Winger","CF"].index('CM')
 position = st.sidebar.selectbox('Select position:', options=["GK","FB","CB","CM","CAM","Winger","CF"],index=default_position_index)
+
+
+
 
 
 # Ensure df_position is selected
@@ -1896,36 +1945,18 @@ elif position == 'FB':
        'Accurate forward passes, %', 'Accurate long passes, %',
        'Accurate passes to final third/90']
     weights=[1.25,1.2,1.2,1,0.8,0.9,0.8]
-    weighted_metrics = pd.DataFrame()
+   # weighted_metrics = pd.DataFrame()
     
     df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
     df_position['Defensive duels won per 90'] = df_position['Defensive duels per 90'] * (df_position['Defensive duels won, %'] / 100)
     df_position['Accurate passes to final third/90'] = df_position['Passes to final third per 90'] * (df_position['Accurate passes to final third, %'] / 100)
     df_position['Accurate crosses per 90'] = df_position['Crosses per 90'] * (df_position['Accurate crosses, %'] / 100)
-    
-    for metric, weight in zip(original_metrics, weights):
-        weighted_metrics[metric] = df_position[metric] * weight
-    
-    # Calculate z-scores for the weighted metrics
-    z_scores = pd.DataFrame()
-    for metric in original_metrics:
-        mean = weighted_metrics[metric].mean()
-        std = weighted_metrics[metric].std()
-        z_scores[f'{metric} zscore'] = (weighted_metrics[metric] - mean) / std
 
-# Aggregate the z-scores to get a final z-score
-    df_position["FB zscore"] = z_scores.mean(axis=1)
-
-# Calculate final z-score and score
-    original_mean = df_position["FB zscore"].mean()
-    original_std = df_position["FB zscore"].std()
-    df_position["FB zscore"] = (df_position["FB zscore"] - original_mean) / original_std
-    df_position["FB Score(0-100)"] = (norm.cdf(df_position["FB zscore"]) * 100).round(2)
-    df_position['Player Rank'] = df_position['FB Score(0-100)'].rank(ascending=False)
+    df_position = standardize_and_score_football_metrics(df_position, original_metrics, weights)
 
     if st.sidebar.button('Show Top 5 Players'):
         df_position_reset = df_position.reset_index()
-        df_position_sorted = df_position_reset.sort_values(by='FB Score(0-100)', ascending=False)  # Assuming higher score is better
+        df_position_sorted = df_position_reset.sort_values(by='Score(0-100)', ascending=False)  # Assuming higher score is better
 
 # Remove duplicates, keeping the one with the highest 'Defender Score(0-100)'
         df_position_unique = df_position_sorted.drop_duplicates(subset='Player', keep='first')
@@ -1933,7 +1964,7 @@ elif position == 'FB':
 # Step 2: Get the top 5 players
         top_5_df = df_position_unique.head(5) 
         # Extract top 5 player names and their unique identifiers
-        top_5_players = top_5_df[['Player', 'FB Score(0-100)']].set_index('Player').to_dict()['FB Score(0-100)']
+        top_5_players = top_5_df[['Player', 'Score(0-100)']].set_index('Player').to_dict()['Score(0-100)']
         top_5_player_names = list(top_5_players.keys())
     
     # Multiselect only includes top 5 players
@@ -1941,7 +1972,7 @@ elif position == 'FB':
         df_filtered2 = df_position_reset[df_position_reset['Player'].isin(players_FB)]
     
     # To ensure only the best rank is retained for each player
-        df_filtered2 = df_filtered2.sort_values(by='FB Score(0-100)', ascending=False)
+        df_filtered2 = df_filtered2.sort_values(by='Score(0-100)', ascending=False)
         df_filtered2 = df_filtered2.drop_duplicates(subset='Player', keep='first')
 
     else:
@@ -2028,7 +2059,7 @@ elif position == 'FB':
   
 
     # Create radar chart for selected players
-    df_position2=df_filtered2.drop(columns=[ 'FB zscore','FB Score(0-100)','Player Rank','Team','Position','Age',
+    df_position2=df_filtered2.drop(columns=[ 'Score','Score(0-100)','Rank','Team','Position','Age',
                         'Matches played','Minutes played',
                         'Accurate crosses per 90', 'Accurate passes to final third/90',
                         'Defensive duels per 90','Defensive duels won, %', 'Aerial duels per 90', 'Aerial duels won, %',
@@ -2040,10 +2071,10 @@ elif position == 'FB':
     # Create Gauge chart for selected players
     st.write("Player Ratings Gauge Chart")
     df_filtered_guage=df_filtered2
-    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'FB Score(0-100)'].values[0]
+    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'Score(0-100)'].values[0]
     players = df_filtered_guage['Player'].tolist()
-    ratings = df_filtered_guage['FB Score(0-100)'].tolist()
-    ranks = df_filtered_guage['Player Rank'].tolist()
+    ratings = df_filtered_guage['Score(0-100)'].tolist()
+    ranks = df_filtered_guage['Rank'].tolist()
     Age = df_filtered_guage['Age'].tolist()
     Team = df_filtered_guage['Team'].tolist()
     Matches=df_filtered_guage['Matches played'].tolist()
