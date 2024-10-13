@@ -348,7 +348,7 @@ if position == 'CM':
        'Shots on target per 90', 'Accurate passes per 90',
        'Accurate forward passes per 90', 'Key passes per 90']
     weights=[1,1,0.9,1,-1.25,1,0.9,1,1.25]
-    weighted_metrics = pd.DataFrame()
+    #weighted_metrics = pd.DataFrame()
     df_position['Assists per 90'] = ((df_position['Assists'] / df_position['Minutes played']) * 90).round(2)
     df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
     df_position['Accurate passes per 90'] = df_position['Passes per 90'] * (df_position['Accurate passes, %'] / 100)
@@ -356,29 +356,11 @@ if position == 'CM':
     df_position['Shots on target per 90'] = df_position['Shots per 90'] * (df_position['Shots on target, %'] / 100)
     #df_position['Accurate passes to final third per 90'] = df_position['Passes to final third per 90'] * (df_position['Accurate passes to final third, %'] / 100)
    
-    for metric, weight in zip(original_metrics, weights):
-        weighted_metrics[metric] = df_position[metric] * weight
-    
-    # Calculate z-scores for the weighted metrics
-    z_scores = pd.DataFrame()
-    for metric in original_metrics:
-        mean = weighted_metrics[metric].mean()
-        std = weighted_metrics[metric].std()
-        z_scores[f'{metric} zscore'] = (weighted_metrics[metric] - mean) / std
-
-# Aggregate the z-scores to get a final z-score
-    df_position["CM zscore"] = z_scores.mean(axis=1)
-
-# Calculate final z-score and score
-    original_mean = df_position["CM zscore"].mean()
-    original_std = df_position["CM zscore"].std()
-    df_position["CM zscore"] = (df_position["CM zscore"] - original_mean) / original_std
-    df_position["CM Score(0-100)"] = (norm.cdf(df_position["CM zscore"]) * 100).round(2)
-    df_position['Player Rank'] = df_position['CM Score(0-100)'].rank(ascending=False)
+    df_position = standardize_and_score_football_metrics(df_position, original_metrics, weights)
 
     # Dropdown menu for player selection based on position
     if st.sidebar.button('Show Top 5 Players'):
-        top_5_players = df_position.nsmallest(5, 'Player Rank').index.tolist()
+        top_5_players = df_position.nsmallest(5, 'Rank').index.tolist()
     # Multiselect only includes top 5 players
         players_CM = st.sidebar.multiselect('Select players:', options=top_5_players, default=top_5_players)
     else:
@@ -457,7 +439,7 @@ if position == 'CM':
     st.plotly_chart(fig)
     
    # Dropping unnecessary column not require for radar chart
-    df_position2=df_filtered.drop(columns=['CM Score(0-100)', 'Position','CM zscore','Player Rank','Age','Team', 'Matches played', 'Minutes played',
+    df_position2=df_filtered.drop(columns=['Score(0-100)', 'Position','Score','Rank','Age','Team', 'Matches played', 'Minutes played',
                                           'Assists','Aerial duels per 90','Aerial duels won, %', 'Passes per 90','Accurate passes, %', 'Forward passes per 90',
                                           'Accurate forward passes, %','Shots on target per 90', 'Shots per 90'])
 
@@ -468,10 +450,10 @@ if position == 'CM':
     # Gauge Chart
     st.write("Player Ratings Gauge Chart")
     df_filtered_guage=df_filtered.reset_index()
-    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'CM Score(0-100)'].values[0]
+    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'Score(0-100)'].values[0]
     players = df_filtered_guage['Player'].tolist()
-    ratings = df_filtered_guage['CM Score(0-100)'].tolist()
-    ranks = df_filtered_guage['Player Rank'].tolist()
+    ratings = df_filtered_guage['Score(0-100)'].tolist()
+    ranks = df_filtered_guage['Rank'].tolist()
     Age = df_filtered_guage['Age'].tolist()
     Team = df_filtered_guage['Team'].tolist()
     Matches=df_filtered_guage['Matches played'].tolist()
@@ -673,29 +655,11 @@ elif position == 'CB':
     df_position['Accurate passes to final third/90'] = df_position['Passes to final third per 90'] * (df_position['Accurate passes to final third, %'] / 100)
     df_position['Accurate progressive passes/90'] = df_position['Progressive passes per 90'] * (df_position['Accurate progressive passes, %'] / 100)
     
-    for metric, weight in zip(original_metrics, weights):
-        weighted_metrics[metric] = df_position[metric] * weight
-    
-    # Calculate z-scores for the weighted metrics
-    z_scores = pd.DataFrame()
-    for metric in original_metrics:
-        mean = weighted_metrics[metric].mean()
-        std = weighted_metrics[metric].std()
-        z_scores[f'{metric} zscore'] = (weighted_metrics[metric] - mean) / std
-
-# Aggregate the z-scores to get a final z-score
-    df_position["defensive zscore"] = z_scores.mean(axis=1)
-
-# Calculate final z-score and score
-    original_mean = df_position["defensive zscore"].mean()
-    original_std = df_position["defensive zscore"].std()
-    df_position["defensive zscore"] = (df_position["defensive zscore"] - original_mean) / original_std
-    df_position["Defender Score(0-100)"] = (norm.cdf(df_position["defensive zscore"]) * 100).round(2)
-    df_position['Player Rank'] = df_position['Defender Score(0-100)'].rank(ascending=False)
+    df_position = standardize_and_score_football_metrics(df_position, original_metrics, weights)
 
     if st.sidebar.button('Show Top 5 Players'):
         df_position_reset = df_position.reset_index()
-        df_position_sorted = df_position_reset.sort_values(by='Defender Score(0-100)', ascending=False)  # Assuming higher score is better
+        df_position_sorted = df_position_reset.sort_values(by='Score(0-100)', ascending=False)  # Assuming higher score is better
 
 # Remove duplicates, keeping the one with the highest 'Defender Score(0-100)'
         df_position_unique = df_position_sorted.drop_duplicates(subset='Player', keep='first')
@@ -703,7 +667,7 @@ elif position == 'CB':
 # Step 2: Get the top 5 players
         top_5_df = df_position_unique.head(5) 
         # Extract top 5 player names and their unique identifiers
-        top_5_players = top_5_df[['Player', 'Defender Score(0-100)']].set_index('Player').to_dict()['Defender Score(0-100)']
+        top_5_players = top_5_df[['Player', 'Score(0-100)']].set_index('Player').to_dict()['Score(0-100)']
         top_5_player_names = list(top_5_players.keys())
     
     # Multiselect only includes top 5 players
@@ -711,7 +675,7 @@ elif position == 'CB':
         df_filtered2 = df_position_reset[df_position_reset['Player'].isin(players_CB)]
     
     # To ensure only the best rank is retained for each player
-        df_filtered2 = df_filtered2.sort_values(by='Defender Score(0-100)', ascending=False)
+        df_filtered2 = df_filtered2.sort_values(by='Score(0-100)', ascending=False)
         df_filtered2 = df_filtered2.drop_duplicates(subset='Player', keep='first')
 
     else:
@@ -788,7 +752,7 @@ elif position == 'CB':
   
 
     # Create radar chart for selected players
-    df_position2=df_filtered2.drop(columns=[ 'defensive zscore','Defender Score(0-100)','Player Rank','Team','Position','Age',
+    df_position2=df_filtered2.drop(columns=[ 'Score','Score(0-100)','Rank','Team','Position','Age',
                         'Matches played','Minutes played','Defensive duels per 90', 'Defensive duels won, %',
        'Aerial duels per 90', 'Aerial duels won, %', 'Passes to final third per 90',
        'Accurate passes to final third, %', 'Progressive passes per 90',
@@ -799,10 +763,10 @@ elif position == 'CB':
     # Create Guage chart for selected players
     st.write("Player Ratings Gauge Chart")
     df_filtered_guage=df_filtered2
-    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'Defender Score(0-100)'].values[0]
+    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'Score(0-100)'].values[0]
     players = df_filtered_guage['Player'].tolist()
-    ratings = df_filtered_guage['Defender Score(0-100)'].tolist()
-    ranks = df_filtered_guage['Player Rank'].tolist()
+    ratings = df_filtered_guage['Score(0-100)'].tolist()
+    ranks = df_filtered_guage['Rank'].tolist()
     Age = df_filtered_guage['Age'].tolist()
     Team = df_filtered_guage['Team'].tolist()
     Matches=df_filtered_guage['Matches played'].tolist()
@@ -982,29 +946,11 @@ elif position == 'Winger':
     df_position['Accurate Crosses per 90'] = df_position['Crosses per 90'] * (df_position['Accurate crosses, %'] / 100)
     
     
-    for metric, weight in zip(original_metrics, weights):
-        weighted_metrics[metric] = df_position[metric] * weight
-    
-    # Calculate z-scores for the weighted metrics
-    z_scores = pd.DataFrame()
-    for metric in original_metrics:
-        mean = weighted_metrics[metric].mean()
-        std = weighted_metrics[metric].std()
-        z_scores[f'{metric} zscore'] = (weighted_metrics[metric] - mean) / std
-
-# Aggregate the z-scores to get a final z-score
-    df_position["wing zscore"] = z_scores.mean(axis=1)
-
-# Calculate final z-score and score
-    original_mean = df_position["wing zscore"].mean()
-    original_std = df_position["wing zscore"].std()
-    df_position["wing zscore"] = (df_position["wing zscore"] - original_mean) / original_std
-    df_position["wing Score(0-100)"] = (norm.cdf(df_position["wing zscore"]) * 100).round(2)
-    df_position['Player Rank'] = df_position['wing Score(0-100)'].rank(ascending=False)
+    df_position = standardize_and_score_football_metrics(df_position, original_metrics, weights)
 
     # Dropdown menu for player selection based on position
     if st.sidebar.button('Show Top 5 Players'):
-        top_5_players = df_position.nsmallest(5, 'Player Rank').index.tolist()
+        top_5_players = df_position.nsmallest(5, 'Rank').index.tolist()
     # Multiselect only includes top 5 players
         players_Wing = st.sidebar.multiselect('Select players:', options=top_5_players, default=top_5_players)
     else:
@@ -1087,7 +1033,7 @@ elif position == 'Winger':
    
     # Create radar chart for selected players
     df_position2=df_filtered.drop(columns=[ 'Position', 'Age', 'Matches played','Team',
-       'Minutes played', 'wing zscore','wing Score(0-100)', 'Player Rank','Goals',
+       'Minutes played', 'Score','Score(0-100)', 'Rank','Goals',
         'Assists','Shots per 90', 'Shots on target, %', 
        'Crosses per 90', 'Accurate crosses, %', 
         'Passes per 90',
@@ -1099,10 +1045,10 @@ elif position == 'Winger':
     # Create Gauge chart for selected players
     st.write("Player Ratings Gauge Chart")
     df_filtered_guage=df_filtered.reset_index()
-    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'wing Score(0-100)'].values[0]
+    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'Score(0-100)'].values[0]
     players = df_filtered_guage['Player'].tolist()
-    ratings = df_filtered_guage['wing Score(0-100)'].tolist()
-    ranks = df_filtered_guage['Player Rank'].tolist()
+    ratings = df_filtered_guage['Score(0-100)'].tolist()
+    ranks = df_filtered_guage['Rank'].tolist()
     Age = df_filtered_guage['Age'].tolist()
     Team = df_filtered_guage['Team'].tolist()
     Matches=df_filtered_guage['Matches played'].tolist()
@@ -1328,7 +1274,7 @@ elif position == 'CF':
        'Recieve long pass, %','Goal threat per 90',
        'Fouls suffered per 90']
     weights=[0.8,1,1.5,1.2,1,0.8,1.1,0.8]
-    weighted_metrics = pd.DataFrame()
+    #weighted_metrics = pd.DataFrame()
     
     df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
     df_position['Shots on Target per 90'] = df_position['Shots per 90'] * (df_position['Shots on target, %'] / 100)
@@ -1337,29 +1283,11 @@ elif position == 'CF':
     df_position['Goal threat per 90'] = 2 * ((df_position['Touches in box per 90'] + 1) * (df_position['Shots on Target per 90'] + 1)) / ((df_position['Touches in box per 90'] + 1) + (df_position['Shots on Target per 90'] + 1))
 
     
-    for metric, weight in zip(original_metrics, weights):
-        weighted_metrics[metric] = df_position[metric] * weight
-    
-    # Calculate z-scores for the weighted metrics
-    z_scores = pd.DataFrame()
-    for metric in original_metrics:
-        mean = weighted_metrics[metric].mean()
-        std = weighted_metrics[metric].std()
-        z_scores[f'{metric} zscore'] = (weighted_metrics[metric] - mean) / std
-
-# Aggregate the z-scores to get a final z-score
-    df_position["CF zscore"] = z_scores.mean(axis=1)
-
-# Calculate final z-score and score
-    original_mean = df_position["CF zscore"].mean()
-    original_std = df_position["CF zscore"].std()
-    df_position["CF zscore"] = (df_position["CF zscore"] - original_mean) / original_std
-    df_position["CF Score(0-100)"] = (norm.cdf(df_position["CF zscore"]) * 100).round(2)
-    df_position['Player Rank'] = df_position['CF Score(0-100)'].rank(ascending=False)
+    df_position = standardize_and_score_football_metrics(df_position, original_metrics, weights)
 
     if st.sidebar.button('Show Top 5 Players'):
         df_position_reset = df_position.reset_index()
-        df_position_sorted = df_position_reset.sort_values(by='CF Score(0-100)', ascending=False)  # Assuming higher score is better
+        df_position_sorted = df_position_reset.sort_values(by='Score(0-100)', ascending=False)  # Assuming higher score is better
 
 # Remove duplicates, keeping the one with the highest 'Defender Score(0-100)'
         df_position_unique = df_position_sorted.drop_duplicates(subset='Player', keep='first')
@@ -1367,7 +1295,7 @@ elif position == 'CF':
 # Step 2: Get the top 5 players
         top_5_df = df_position_unique.head(5) 
         # Extract top 5 player names and their unique identifiers
-        top_5_players = top_5_df[['Player', 'CF Score(0-100)']].set_index('Player').to_dict()['CF Score(0-100)']
+        top_5_players = top_5_df[['Player', 'Score(0-100)']].set_index('Player').to_dict()['Score(0-100)']
         top_5_player_names = list(top_5_players.keys())
     
     # Multiselect only includes top 5 players
@@ -1375,7 +1303,7 @@ elif position == 'CF':
         df_filtered2 = df_position_reset[df_position_reset['Player'].isin(players_CF)]
     
     # To ensure only the best rank is retained for each player
-        df_filtered2 = df_filtered2.sort_values(by='CF Score(0-100)', ascending=False)
+        df_filtered2 = df_filtered2.sort_values(by='Score(0-100)', ascending=False)
         df_filtered2 = df_filtered2.drop_duplicates(subset='Player', keep='first')
 
     else:
@@ -1452,7 +1380,7 @@ elif position == 'CF':
     # Create radar chart for selected players
     df_position2=df_filtered2.drop(columns=[ 'Team','Position',
                         'Matches played', 'Minutes played','Age',
-                       'CF Score(0-100)', 'Player Rank', 'CF zscore','Goals', 'Aerial duels per 90', 'Aerial duels won, %',
+                       'Score(0-100)', 'Rank', 'Score','Goals', 'Aerial duels per 90', 'Aerial duels won, %',
        'Shots per 90','Shots on target, %','xG',
        'Received passes per 90', 'Received long passes per 90',
        'Fouls suffered per 90'
@@ -1464,10 +1392,10 @@ elif position == 'CF':
     # Create Gauge chart for selected players
     st.write("Player Ratings Gauge Chart")
     df_filtered_guage=df_filtered2
-    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'CF Score(0-100)'].values[0]
+    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'Score(0-100)'].values[0]
     players = df_filtered_guage['Player'].tolist()
-    ratings = df_filtered_guage['CF Score(0-100)'].tolist()
-    ranks = df_filtered_guage['Player Rank'].tolist()
+    ratings = df_filtered_guage['Score(0-100)'].tolist()
+    ranks = df_filtered_guage['Rank'].tolist()
     Age = df_filtered_guage['Age'].tolist()
     Team = df_filtered_guage['Team'].tolist()
     Matches=df_filtered_guage['Matches played'].tolist()
@@ -1631,32 +1559,14 @@ elif position == 'GK':
        'Conceded goals per 90','xG against per 90','Prevented goals per 90',
         'Save rate, %', 'Exits per 90', 'Aerial duels per 90']
     weights=[-1.25,-1,1.25,1.1,1,1]
-    weighted_metrics = pd.DataFrame()
+    #weighted_metrics = pd.DataFrame()
     df_position['Saved Goal']= df_position['Shots against'] - df_position['Conceded goals']
     df_position['Saved Goal per 90']= (df_position['Saved Goal'] / df_position['Minutes played']) * 90
     
-    for metric, weight in zip(original_metrics, weights):
-        weighted_metrics[metric] = df_position[metric] * weight
-    
-    # Calculate z-scores for the weighted metrics
-    z_scores = pd.DataFrame()
-    for metric in original_metrics:
-        mean = weighted_metrics[metric].mean()
-        std = weighted_metrics[metric].std()
-        z_scores[f'{metric} zscore'] = (weighted_metrics[metric] - mean) / std
-
-# Aggregate the z-scores to get a final z-score
-    df_position["GK zscore"] = z_scores.mean(axis=1)
-
-# Calculate final z-score and score
-    original_mean = df_position["GK zscore"].mean()
-    original_std = df_position["GK zscore"].std()
-    df_position["GK zscore"] = (df_position["GK zscore"] - original_mean) / original_std
-    df_position["GK Score(0-100)"] = (norm.cdf(df_position["GK zscore"]) * 100).round(2)
-    df_position['Player Rank'] = df_position['GK Score(0-100)'].rank(ascending=False)
+    df_position = standardize_and_score_football_metrics(df_position, original_metrics, weights)
 
     if st.sidebar.button('Show Top 5 Players'):
-        top_5_players = df_position.nsmallest(5, 'Player Rank').index.tolist()
+        top_5_players = df_position.nsmallest(5, 'Rank').index.tolist()
     # Multiselect only includes top 5 players
         players_GK = st.sidebar.multiselect('Select players:', options=top_5_players, default=top_5_players)
     else:
@@ -1740,7 +1650,7 @@ elif position == 'GK':
     # Create radar chart for selected players
     df_position2=df_filtered.drop(columns=[ 'Team','Position',
                         'Matches played', 'Minutes played','Age',
-                       'GK Score(0-100)', 'Player Rank', 'GK zscore',
+                       'Score(0-100)', 'Rank', 'Score',
                             'Saved Goal per 90', 'Saved Goal','Conceded goals', 
          'Prevented goals','Shots against' ])
                               
@@ -1749,10 +1659,10 @@ elif position == 'GK':
     # Create Gauge chart for selected players
     st.write("Player Ratings Gauge Chart")
     df_filtered_guage=df_filtered2
-    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'GK Score(0-100)'].values[0]
+    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'Score(0-100)'].values[0]
     players = df_filtered_guage['Player'].tolist()
-    ratings = df_filtered_guage['GK Score(0-100)'].tolist()
-    ranks = df_filtered_guage['Player Rank'].tolist()
+    ratings = df_filtered_guage['Score(0-100)'].tolist()
+    ranks = df_filtered_guage['Rank'].tolist()
     Age = df_filtered_guage['Age'].tolist()
     Team = df_filtered_guage['Team'].tolist()
     Matches=df_filtered_guage['Matches played'].tolist()
@@ -2240,14 +2150,14 @@ elif position == 'CAM':
     df_position = pvt_df_CAM
 
     original_metrics =[
-       'Assists per 90', 'Defensive duels won per 90', 'Successful attacking actions per 90',
+        'Defensive duels won per 90', 'Successful attacking actions per 90',
        'Shots on Target per 90', 'Successful dribbles, %',
        'Offensive duels won, %', 'Progressive runs per 90',
        'Received passes per 90', 'Overall Passing Skills, %']
-    weights=[1.25,0.6,1,1,0.9,0.9,0.9,0.8,1.2]
-    weighted_metrics = pd.DataFrame()
+    weights=[0.8,1,1,1,1,1,0.8,1.2]
+    #weighted_metrics = pd.DataFrame()
     
-    df_position['Assists per 90'] = ((df_position['Assists'] / df_position['Minutes played']) * 90).round(2)
+    #df_position['Assists per 90'] = ((df_position['Assists'] / df_position['Minutes played']) * 90).round(2)
     df_position['Defensive duels won per 90'] = df_position['Defensive duels per 90'] * (df_position['Defensive duels won, %'] / 100)
     df_position['Shots on Target per 90'] = df_position['Shots per 90'] * (df_position['Shots on target, %'] / 100)
     df_position['Overall Passing Skills, %'] = (df_position['Accurate forward passes, %'] * 0.2 + 
@@ -2255,29 +2165,11 @@ elif position == 'CAM':
                                                 + df_position['Accurate passes to penalty area, %'] * 0.3
                                                 + df_position['Accurate progressive passes, %'] * 0.2)
     
-    for metric, weight in zip(original_metrics, weights):
-        weighted_metrics[metric] = df_position[metric] * weight
-    
-    # Calculate z-scores for the weighted metrics
-    z_scores = pd.DataFrame()
-    for metric in original_metrics:
-        mean = weighted_metrics[metric].mean()
-        std = weighted_metrics[metric].std()
-        z_scores[f'{metric} zscore'] = (weighted_metrics[metric] - mean) / std
-
-# Aggregate the z-scores to get a final z-score
-    df_position["CAM zscore"] = z_scores.mean(axis=1)
-
-# Calculate final z-score and score
-    original_mean = df_position["CAM zscore"].mean()
-    original_std = df_position["CAM zscore"].std()
-    df_position["CAM zscore"] = (df_position["CAM zscore"] - original_mean) / original_std
-    df_position["CAM Score(0-100)"] = (norm.cdf(df_position["CAM zscore"]) * 100).round(2)
-    df_position['Player Rank'] = df_position['CAM Score(0-100)'].rank(ascending=False)
+   df_position = standardize_and_score_football_metrics(df_position, original_metrics, weights)
 
     if st.sidebar.button('Show Top 5 Players'):
         df_position_reset = df_position.reset_index()
-        df_position_sorted = df_position_reset.sort_values(by='CAM Score(0-100)', ascending=False)  # Assuming higher score is better
+        df_position_sorted = df_position_reset.sort_values(by='Score(0-100)', ascending=False)  # Assuming higher score is better
 
 # Remove duplicates, keeping the one with the highest 'Defender Score(0-100)'
         df_position_unique = df_position_sorted.drop_duplicates(subset='Player', keep='first')
@@ -2285,7 +2177,7 @@ elif position == 'CAM':
 # Step 2: Get the top 5 players
         top_5_df = df_position_unique.head(5) 
         # Extract top 5 player names and their unique identifiers
-        top_5_players = top_5_df[['Player', 'CAM Score(0-100)']].set_index('Player').to_dict()['CAM Score(0-100)']
+        top_5_players = top_5_df[['Player', 'Score(0-100)']].set_index('Player').to_dict()['Score(0-100)']
         top_5_player_names = list(top_5_players.keys())
     
     # Multiselect only includes top 5 players
@@ -2293,7 +2185,7 @@ elif position == 'CAM':
         df_filtered2 = df_position_reset[df_position_reset['Player'].isin(players_CAM)]
     
     # To ensure only the best rank is retained for each player
-        df_filtered2 = df_filtered2.sort_values(by='CAM Score(0-100)', ascending=False)
+        df_filtered2 = df_filtered2.sort_values(by='Score(0-100)', ascending=False)
         df_filtered2 = df_filtered2.drop_duplicates(subset='Player', keep='first')
 
     else:
@@ -2378,8 +2270,8 @@ elif position == 'CAM':
     
 
     # Create radar chart for selected players
-    df_position2=df_filtered2.drop(columns=[ 'Team','Contract Expiry \n(Trnsfmkt)','Matches played\n(23/24)','Minutes played','Age',
-                       'CAM Score(0-100)', 'Player Rank', 'CAM zscore','Assists', 'Defensive duels per 90',
+    df_position2=df_filtered2.drop(columns=[ 'Team','Position','Matches played','Minutes played','Age',
+                       'Score(0-100)', 'Rank', 'Score','Assists', 'Defensive duels per 90',
        'Defensive duels won, %', 'Shots per 90', 'Shots on target, %', 'Successful dribbles, %',
        'Passes per 90', 'Accurate passes, %','Accurate forward passes, %','Progressive passes,%','pass into penalty area,%','pass into final third,%'
                                           ])
@@ -2390,21 +2282,22 @@ elif position == 'CAM':
     # Create Gauge chart for selected players
     st.write("Player Ratings Gauge Chart")
     df_filtered_guage=df_filtered2
-    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'CAM Score(0-100)'].values[0]
+    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'Score(0-100)'].values[0]
     players = df_filtered_guage['Player'].tolist()
-    ratings = df_filtered_guage['CAM Score(0-100)'].tolist()
-    ranks = df_filtered_guage['Player Rank'].tolist()
+    ratings = df_filtered_guage['Score(0-100)'].tolist()
+    ranks = df_filtered_guage['Rank'].tolist()
     Age = df_filtered_guage['Age'].tolist()
     Team = df_filtered_guage['Team'].tolist()
-    Matches=df_filtered_guage['Matches played\n(23/24)'].tolist()
+    Matches=df_filtered_guage['Matches played'].tolist()
     Minutes=df_filtered_guage['Minutes played'].tolist()
+    Position=df_filtered_guage['Position'].tolist()
 
     for i in range(0, len(players), 3):  # 3 charts per row
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(players):
                 with cols[j]:
-                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],league_average_rating)
+                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],Position[i + j],league_average_rating)
                     st.plotly_chart(fig)
 
 
@@ -2497,21 +2390,21 @@ elif position == 'CAM':
 
     
    # Bar plot
-    df_filtered2 = df_filtered2.sort_values(by='Assists per 90', ascending=False)
+    df_filtered2 = df_filtered2.sort_values(by='Successful attacking actions per 90', ascending=False)
 
     fig3 = px.bar(
     df_filtered2, 
-    x='Assists per 90', 
+    x='Successful attacking actions per 90', 
     y='Player', 
     orientation='h', 
-    title=f'{position} Assisting Skills',
-    color='Assists per 90',  # Color based on 'Aerial duels won per 90'
+    title=f'{position} Attacking Actions',
+    color='Successful attacking actions per 90',  # Color based on 'Aerial duels won per 90'
     color_continuous_scale='oranges'  # Color scale from dark to light
     # range_color=[0, max_aerial_duels_won]    
          )
 
 # Reverse the color scale so that higher values are darker
-    fig3.update_layout(coloraxis_colorbar=dict(title="Assists per 90"))
+    fig3.update_layout(coloraxis_colorbar=dict(title="Successful attacking actions per 90"))
     st.plotly_chart(fig3)
 
     
