@@ -1892,7 +1892,7 @@ elif position == 'FB':
 
     original_metrics =[
        'Defensive duels won per 90','Aerial duels won per 90',
-       'PAdj Interceptions',  'Accurate crosses per 90',
+       'Interceptions per 90',  'Accurate crosses per 90',
        'Accurate forward passes, %', 'Accurate long passes, %',
        'Accurate passes to final third, %']
     weights=[1.1,1.1,1.1,0.9,0.9,0.9,0.9]
