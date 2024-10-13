@@ -1891,11 +1891,11 @@ elif position == 'FB':
     df_position = pvt_df_FB
 
     original_metrics =[
-       'Defensive duels won per 90','Aerial duels won per 90',
-       'Interceptions per 90',  'Accurate crosses per 90',
+       'Defensive duels won, %','Aerial duels won, %',
+       'Interceptions per 90',  'Accurate crosses, %',
        'Accurate forward passes, %', 'Accurate long passes, %',
        'Accurate passes to final third, %']
-    weights=[1.25,1.2,1.2,1,0.9,1,0.9]
+    weights=[1.25,1.2,1.2,1,0.8,1,0.8]
     weighted_metrics = pd.DataFrame()
     
     df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
