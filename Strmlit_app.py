@@ -1566,7 +1566,7 @@ elif position == 'GK':
     df_position = standardize_and_score_football_metrics(df_position, original_metrics, weights)
 
     if st.sidebar.button('Show Top 5 Players'):
-        top_5_players = df_position.nsmallest(5, 'Rank').index.tolist()
+        top_5_players = df_position.nsmallest(5,'Rank').index.tolist()
     # Multiselect only includes top 5 players
         players_GK = st.sidebar.multiselect('Select players:', options=top_5_players, default=top_5_players)
     else:
