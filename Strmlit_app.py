@@ -1609,7 +1609,7 @@ elif position == 'GK':
         players_GK = st.sidebar.multiselect('Select players:', options=top_5_players, default=top_5_players)
     else:
     # Multiselect includes all players
-        players_GK = st.sidebar.multiselect('Select players:', options=df_position.index.tolist(), default=['L1 & L2 Average'])
+        players_GK = st.sidebar.multiselect('Select players:', options=df_position.index.tolist(), default=['League Two Average'])
 
     # players_CB = st.sidebar.multiselect('Select players:', options=df_position.index.tolist(), default=['League Two Average'])
     df_filtered = df_position.loc[players_GK]
@@ -1618,7 +1618,7 @@ elif position == 'GK':
     
     df_filtered_new=df_position.reset_index()
     
-    league_avg_row = df_filtered_new[df_filtered_new['Player'] == 'L1 & L2 Average']
+    league_avg_row = df_filtered_new[df_filtered_new['Player'] == 'League Two Average']
 
     league_avg_values = {
     'Shots against per 90': league_avg_row['Shots against per 90'].values[0],
@@ -1686,19 +1686,18 @@ elif position == 'GK':
     
 
     # Create radar chart for selected players
-    df_position2=df_filtered.drop(columns=[ 'Team','Contract Expiry \n(Trnsfmkt)',
+    df_position2=df_filtered.drop(columns=[ 'Team','Position',
                         'Matches played', 'Minutes played','Age',
                        'GK Score(0-100)', 'Player Rank', 'GK zscore',
                             'Saved Goal per 90', 'Saved Goal','Conceded goals', 
-       'xG against',  'Prevented goals',
-       'Shots against' ])
+         'Prevented goals','Shots against' ])
                               
     radar_fig =create_radar_chart(df_position2, players_GK, id_column='Player', title=f'Radar Chart for Selected {position} (Default:League Average)')
     st.plotly_chart(radar_fig)
     # Create Gauge chart for selected players
     st.write("Player Ratings Gauge Chart")
     df_filtered_guage=df_filtered2
-    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'L1 & L2 Average', 'GK Score(0-100)'].values[0]
+    league_average_rating = df_filtered_new.loc[df_filtered_new['Player'] == 'League Two Average', 'GK Score(0-100)'].values[0]
     players = df_filtered_guage['Player'].tolist()
     ratings = df_filtered_guage['GK Score(0-100)'].tolist()
     ranks = df_filtered_guage['Player Rank'].tolist()
@@ -1706,13 +1705,14 @@ elif position == 'GK':
     Team = df_filtered_guage['Team'].tolist()
     Matches=df_filtered_guage['Matches played'].tolist()
     Minutes=df_filtered_guage['Minutes played'].tolist()
+    Position=df_filtered_guage['Position'].tolist()
 
     for i in range(0, len(players), 3):  # 3 charts per row
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(players):
                 with cols[j]:
-                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],league_average_rating)
+                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],Position[i + j],league_average_rating)
                     st.plotly_chart(fig)
 
 
@@ -1732,8 +1732,8 @@ elif position == 'GK':
     x_min_mp, x_max_mp = df_filtered_new['Prevented goals per 90'].min(), df_filtered_new['Prevented goals per 90'].max()
     y_min_cs, y_max_cs = df_filtered_new['Save rate, %'].min(), df_filtered_new['Save rate, %'].max()
 
-    fig2 = px.scatter(df_filtered.reset_index(), x='Prevented goals per 90', y='Save rate, %',
-                     color='Player', title=f'{position} Saving Strength')
+    fig2 = px.scatter(df_filtered.reset_index(), x='xG against per 90', y='Prevented goals per 90,
+                     color='Player', title=f'{position} xG vs Prevention')
     
     
   
@@ -1767,8 +1767,8 @@ elif position == 'GK':
     fig2.update_traces(marker=dict(size=8))
  
     
-    fig3 = px.scatter(df_filtered.reset_index(), x='Matches played', y='Clean sheets',
-                     color='Player', title=f'{position} Clean sheets vs Matches Played')
+    fig3 = px.scatter(df_filtered.reset_index(), x='Prevented goals per 90', y='Save rate, %',
+                     color='Player', title=f'{position} Save vs Prevention)
     
     
   
