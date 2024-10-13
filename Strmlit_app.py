@@ -1957,13 +1957,13 @@ elif position == 'FB':
 
 # Extract league average values
     league_avg_values = {
-    'Minutes played': league_avg_row['Minutes played'].values[0],
+    'Accurate long passes, %': league_avg_row['Accurate long passes, %'].values[0],
     'Defensive duels won per 90': league_avg_row['Defensive duels won per 90'].values[0],
     'Interceptions per 90': league_avg_row['Interceptions per 90'].values[0],
     'Aerial duels won per 90': league_avg_row['Aerial duels won per 90'].values[0]
       }
 # get max value for X and Y to create quadrants
-    x_max = df_filtered_new['Minutes played'].max()
+    x_max = df_filtered_new['Accurate long passes, %'].max()
     y_max_values = {
     'Defensive duels won per 90': df_filtered_new['Defensive duels won per 90'].max(),
     'Interceptions per 90': df_filtered_new['Interceptions per 90'].max(),
@@ -1983,8 +1983,8 @@ elif position == 'FB':
     # df_filtered2 = df_filtered2.rename(columns={'Successful defensive actions per 90': 'Successful def. Action/90'})
 
    
-    fig = px.scatter(df_filtered2, x='Minutes played', y=['Defensive duels won per 90', 'Interceptions per 90', 'Aerial duels won per 90'], facet_col='variable',
-                facet_col_spacing=0.08,  color='Player',  title='Defensive Action')
+    fig = px.scatter(df_filtered2, x='Accurate long passes, %', y=['Defensive duels won per 90', 'Interceptions per 90', 'Aerial duels won per 90'], facet_col='variable',
+                facet_col_spacing=0.08,  color='Player',  title='Defensive Action vs Passing skills')
 
     for i, facet_name in enumerate(['Defensive duels won per 90', 'Interceptions per 90', 'Aerial duels won per 90']):
         # Add horizontal line
@@ -2006,9 +2006,9 @@ elif position == 'FB':
         fig.add_shape(
         go.layout.Shape(
             type='line',
-            x0=league_avg_values['Minutes played'],
+            x0=league_avg_values['Accurate long passes, %'],
             y0=y_min_values[facet_name],
-            x1=league_avg_values['Minutes played'],
+            x1=league_avg_values['Accurate long passes, %'],
             y1=y_max_values[facet_name],
             xref=f'x{i+1}',
             yref=f'y{i+1}',
