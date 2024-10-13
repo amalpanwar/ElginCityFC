@@ -299,13 +299,16 @@ def standardize_and_score_football_metrics(df, metrics, weights=None):
             std = df[metric].std()
             standardized_metrics[metric] = ((df[metric] - mean) / std) * weight
     
-    # Calculate final score
+    # Aggregate the score final score
     df["Score"] = standardized_metrics.mean(axis=1)
     
-    # Normalize the final score to a 0-100 scale
-    min_score = df["Score"].min()
-    max_score = df["Score"].max()
-    df["Score(0-100)"] = ((df["Score"] - min_score) / (max_score - min_score) * 100).round(2)
+    # Calculate final z-score
+    original_mean = df["Score"].mean()
+    original_std = df["Score"].std()
+    df["Score"] = (df["Score"] - original_mean) / original_std
+    
+    # Calculate final score (0-100)
+    df["Score(0-100)"] = (norm.cdf(df["Score"]) * 100).round(2)
     
     # Calculate player rank
     df['Rank'] = df['Score(0-100)'].rank(ascending=False)
