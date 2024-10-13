@@ -1768,7 +1768,7 @@ elif position == 'GK':
  
     
     fig3 = px.scatter(df_filtered.reset_index(), x='Prevented goals per 90', y='Save rate, %',
-                     color='Player', title=f'{position} Save vs Prevention)
+                     color='Player', title=f'{position} Save vs Prevention')
     
     
   
