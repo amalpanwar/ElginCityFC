@@ -1732,7 +1732,7 @@ elif position == 'GK':
     x_min_mp, x_max_mp = df_filtered_new['Prevented goals per 90'].min(), df_filtered_new['Prevented goals per 90'].max()
     y_min_cs, y_max_cs = df_filtered_new['Save rate, %'].min(), df_filtered_new['Save rate, %'].max()
 
-    fig2 = px.scatter(df_filtered.reset_index(), x='xG against per 90', y='Prevented goals per 90,
+    fig2 = px.scatter(df_filtered.reset_index(), x='xG against per 90', y='Prevented goals per 90',
                      color='Player', title=f'{position} xG vs Prevention')
     
     
