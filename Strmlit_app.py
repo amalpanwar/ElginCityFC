@@ -1891,11 +1891,11 @@ elif position == 'FB':
     df_position = pvt_df_FB
 
     original_metrics =[
-       'Successful defensive actions per 90', 'Defensive duels won per 90','Aerial duels won per 90',
-       'Interceptions per 90',  'Accurate crosses per 90',
+       'Defensive duels won per 90','Aerial duels won per 90',
+       'PAdj Interceptions',  'Accurate crosses per 90',
        'Accurate forward passes, %', 'Accurate long passes, %',
-       'Accurate passes to final third/90']
-    weights=[1,1.1,1.1,1.1,0.9,0.9,0.9,0.9]
+       'Accurate passes to final third, %']
+    weights=[1.1,1.1,1.1,0.9,0.9,0.9,0.9]
     weighted_metrics = pd.DataFrame()
     
     df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
@@ -1957,13 +1957,13 @@ elif position == 'FB':
 
 # Extract league average values
     league_avg_values = {
-    'Successful defensive actions per 90': league_avg_row['Successful defensive actions per 90'].values[0],
+    'Minutes played': league_avg_row['Minutes played'].values[0],
     'Defensive duels won per 90': league_avg_row['Defensive duels won per 90'].values[0],
     'Interceptions per 90': league_avg_row['Interceptions per 90'].values[0],
     'Aerial duels won per 90': league_avg_row['Aerial duels won per 90'].values[0]
       }
 # get max value for X and Y to create quadrants
-    x_max = df_filtered_new['Successful defensive actions per 90'].max()
+    x_max = df_filtered_new['Minutes played'].max()
     y_max_values = {
     'Defensive duels won per 90': df_filtered_new['Defensive duels won per 90'].max(),
     'Interceptions per 90': df_filtered_new['Interceptions per 90'].max(),
@@ -1978,12 +1978,12 @@ elif position == 'FB':
 
     # df_filtered2=df_filtered.reset_index()
 
-    df_filtered2 = df_filtered2.rename(columns={'Successful defensive actions per 90': 'Successful def. Action/90'})
+    #df_filtered2 = df_filtered2.rename(columns={'Successful defensive actions per 90': 'Successful def. Action/90'})
    
     # df_filtered2 = df_filtered2.rename(columns={'Successful defensive actions per 90': 'Successful def. Action/90'})
 
    
-    fig = px.scatter(df_filtered2, x='Successful def. Action/90', y=['Defensive duels won per 90', 'Interceptions per 90', 'Aerial duels won per 90'], facet_col='variable',
+    fig = px.scatter(df_filtered2, x='Minutes played', y=['Defensive duels won per 90', 'Interceptions per 90', 'Aerial duels won per 90'], facet_col='variable',
                 facet_col_spacing=0.08,  color='Player',  title='Defensive Action')
 
     for i, facet_name in enumerate(['Defensive duels won per 90', 'Interceptions per 90', 'Aerial duels won per 90']):
@@ -2006,9 +2006,9 @@ elif position == 'FB':
         fig.add_shape(
         go.layout.Shape(
             type='line',
-            x0=league_avg_values['Successful defensive actions per 90'],
+            x0=league_avg_values['Minutes played'],
             y0=y_min_values[facet_name],
-            x1=league_avg_values['Successful defensive actions per 90'],
+            x1=league_avg_values['Minutes played'],
             y1=y_max_values[facet_name],
             xref=f'x{i+1}',
             yref=f'y{i+1}',
@@ -2028,7 +2028,7 @@ elif position == 'FB':
   
 
     # Create radar chart for selected players
-    df_position2=df_filtered2.drop(columns=[ 'FB zscore','FB Score(0-100)','Player Rank','Team','Contract Expiry \n(Trnsfmkt)','Age',
+    df_position2=df_filtered2.drop(columns=[ 'FB zscore','FB Score(0-100)','Player Rank','Team','Position','Age',
                         'Matches played','Minutes played',
                         'Accurate crosses per 90', 'Accurate passes to final third/90',
                         'Defensive duels per 90','Defensive duels won, %', 'Aerial duels per 90', 'Aerial duels won, %',
@@ -2048,13 +2048,14 @@ elif position == 'FB':
     Team = df_filtered_guage['Team'].tolist()
     Matches=df_filtered_guage['Matches played'].tolist()
     Minutes=df_filtered_guage['Minutes played'].tolist()
+    Position=df_filtered_guage['Position'].tolist()
 
     for i in range(0, len(players), 3):  # 3 charts per row
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(players):
                 with cols[j]:
-                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],league_average_rating)
+                    fig = create_gauge_chart(players[i + j], ratings[i + j], ranks[i + j],Age[i + j], Team[i + j], Matches[i + j], Minutes[i + j],Position[i + j],league_average_rating)
                     st.plotly_chart(fig)
 
     league_avg_values = {
