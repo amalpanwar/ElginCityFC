@@ -2271,9 +2271,9 @@ elif position == 'CAM':
 
     # Create radar chart for selected players
     df_position2=df_filtered2.drop(columns=[ 'Team','Position','Matches played','Minutes played','Age',
-                       'Score(0-100)', 'Rank', 'Score','Assists', 'Defensive duels per 90',
-       'Defensive duels won, %', 'Shots per 90', 'Shots on target, %', 'Successful dribbles, %',
-       'Passes per 90', 'Accurate passes, %','Accurate forward passes, %','Progressive passes,%','pass into penalty area,%','pass into final third,%'
+                       'Score(0-100)', 'Rank', 'Score','Defensive duels per 90',
+       'Defensive duels won, %', 'Successful dribbles, %',
+        'Accurate passes, %','Accurate forward passes, %','Progressive passes,%','pass into penalty area,%','pass into final third,%'
                                           ])
                               
     radar_fig =create_radar_chart(df_position2.set_index('Player'), players_CAM, id_column='Player', title=f'Radar Chart for Selected {position} (Default: League Average)')
@@ -2307,7 +2307,7 @@ elif position == 'CAM':
     'Offensive duels won, %': league_avg_row['Offensive duels won, %'].values[0],
     'Defensive duels won, %': league_avg_row['Defensive duels won, %'].values[0],
     'Progressive runs per 90': league_avg_row['Progressive runs per 90'].values[0],
-    'Passes per 90': league_avg_row['Passes per 90'].values[0]
+    'Received passes per 90': league_avg_row['Received passes per 90'].values[0]
         
           }
 
@@ -2315,7 +2315,7 @@ elif position == 'CAM':
     x_min, x_max = df_filtered_new['Offensive duels won, %'].min(), df_filtered_new['Offensive duels won, %'].max()
     y_min, y_max = df_filtered_new['Defensive duels won, %'].min(), df_filtered_new['Defensive duels won, %'].max()
     y_min_pro, y_max_pro = df_filtered_new['Progressive runs per 90'].min(), df_filtered_new['Progressive runs per 90'].max()
-    x_min_pas, x_max_pas = df_filtered_new['Passes per 90'].min(), df_filtered_new['Passes per 90'].max()
+    x_min_pas, x_max_pas = df_filtered_new['Received passes per 90'].min(), df_filtered_new['Received passes per 90'].max()
 
     # creating scatter plot
     fig2 = px.scatter(df_filtered2, x='Offensive duels won, %',y='Defensive duels won, %',
@@ -2350,8 +2350,8 @@ elif position == 'CAM':
     fig2.update_traces(textposition='top center')
     fig2.update_traces(marker=dict(size=8))
 #Create scatter plot
-    fig22 = px.scatter(df_filtered2, x='Passes per 90',y='Progressive runs per 90',
-                     color='Player', title=f'{position} Passing vs Running ability')
+    fig22 = px.scatter(df_filtered2, x='Received passes per 90',y='Progressive runs per 90',
+                     color='Player', title=f'{position} Receive Passing vs Running ability')
     # Add quadrants
     fig22.add_shape(
     go.layout.Shape(
@@ -2369,9 +2369,9 @@ elif position == 'CAM':
     fig22.add_shape(
     go.layout.Shape(
         type='line',
-        x0=league_avg_values2['Passes per 90'], 
+        x0=league_avg_values2['Received passes per 90'], 
         y0=y_min_pro,
-        x1=league_avg_values2['Passes per 90'],
+        x1=league_avg_values2['Received passes per 90'],
         y1=y_max_pro,
         line=dict(color='blue', width=1, dash='dash'),
         xref='x',
