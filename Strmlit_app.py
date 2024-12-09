@@ -594,7 +594,7 @@ if position == 'CM':
                   )
 
         # Loading document through loader
-            loader = CSVLoader("CM_ElginFC.csv", encoding="windows-1252")
+            loader = CSVLoader("WW_RB.csv", encoding="windows-1252")
             docs = loader.load()
         # st.write("Documents loaded successfully.")
   
