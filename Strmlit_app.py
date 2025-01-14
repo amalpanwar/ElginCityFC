@@ -11,7 +11,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import sqlite3
+# import sqlite3
 #from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage
 import getpass
