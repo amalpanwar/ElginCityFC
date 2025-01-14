@@ -937,8 +937,9 @@ elif position == 'Winger':
        'Successful attacking actions per 90',
        'Goals per 90', 'Shots on Target per 90', 'Assists per 90',
        'Accurate Crosses per 90', 'Successful dribbles, %',
-       'Offensive duels per 90','Progressive runs per 90', 'Fouls suffered per 90', 'Accurate Passes per 90']
-    weights=[1,1.1,1,1.25,1,1.2,1,1,0.75,0.9]    
+       'Offensive duels per 90','Progressive runs per 90', 'Fouls suffered per 90', 'Accurate Passes per 90',
+       'Accurate passes to penalty area, %']
+    weights=[1,1.1,1,1.25,1,1.2,1,1,0.75,0.9,1.2]    
     weighted_metrics = pd.DataFrame()
     df_position['Shots on Target per 90'] = df_position['Shots per 90'] * (df_position['Shots on target, %'] / 100)
     #df_position['Offensive duels won per 90'] = df_position['Offensive duels per 90'] * (df_position['Offensive duels won, %'] / 100)
@@ -973,7 +974,8 @@ elif position == 'Winger':
     'Successful attacking actions per 90': league_avg_row['Successful attacking actions per 90'].values[0],
     'Shots on Target per 90': league_avg_row['Shots on Target per 90'].values[0],
     'Accurate Crosses per 90': league_avg_row['Accurate Crosses per 90'].values[0],
-    'Successful dribbles, %': league_avg_row['Successful dribbles, %'].values[0]
+    'Successful dribbles, %': league_avg_row['Successful dribbles, %'].values[0],
+    'Accurate passes to penalty area, %': league_avg_row['Accurate passes to penalty area, %'].values[0]
       }
 # get max value for X and Y to create quadrants
     x_max = df_filtered_new['Successful attacking actions per 90'].max()
@@ -981,16 +983,18 @@ elif position == 'Winger':
     'Shots on Target per 90': df_filtered_new['Shots on Target per 90'].max(),
     'Accurate Crosses per 90': df_filtered_new['Accurate Crosses per 90'].max(),
     'Successful dribbles, %': df_filtered_new['Successful dribbles, %'].max()
+    'Accurate passes to penalty area, %': df_filtered_new['Accurate passes to penalty area, %'].max()
            }
     
     
     df_filtered2 = df_filtered2.rename(columns={
-                                                'Successful attacking actions per 90': 'Successful Attck. Action/90'})
+                                                'Successful attacking actions per 90': 'Successful Attck. Action/90',
+                                                     'Accurate passes to penalty area, %': 'Accurate Passes in PA(%)' })
    
-    fig = px.scatter(df_filtered2, x='Successful Attck. Action/90', y=['Shots on Target per 90','Accurate Crosses per 90', 'Successful dribbles, %'], facet_col='variable',
+    fig = px.scatter(df_filtered2, x='Successful Attck. Action/90', y=['Shots on Target per 90','Accurate Crosses per 90', 'Successful dribbles, %','Accurate Passes in PA(%)'], facet_col='variable',
                  facet_col_spacing=0.08, color='Player', title='Pressing Threats vs Final Action')
 
-    for i, facet_name in enumerate(['Shots on Target per 90','Accurate Crosses per 90', 'Successful dribbles, %']):
+    for i, facet_name in enumerate(['Shots on Target per 90','Accurate Crosses per 90', 'Successful dribbles, %','Accurate Passes in PA(%)']):
         # Add horizontal line
         fig.add_shape(
         go.layout.Shape(
