@@ -12,7 +12,8 @@ huggingface_hub
 networkx
 protobuf==3.20.0
 langchain-huggingface
-pysqlite3
+pysqlite3-binary
+sqlite3
 langchain
 faiss-cpu
 scipy
