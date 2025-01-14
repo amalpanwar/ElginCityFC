@@ -975,7 +975,7 @@ elif position == 'Winger':
     'Successful attacking actions per 90': league_avg_row['Successful attacking actions per 90'].values[0],
     'Shots on Target per 90': league_avg_row['Shots on Target per 90'].values[0],
     'Accurate Crosses per 90': league_avg_row['Accurate Crosses per 90'].values[0],
-    'Successful dribbles, %': league_avg_row['Successful dribbles, %'].values[0],
+    # 'Successful dribbles, %': league_avg_row['Successful dribbles, %'].values[0],
     'Accurate passes to penalty area, %': league_avg_row['Accurate passes to penalty area, %'].values[0]
       }
 # get max value for X and Y to create quadrants
@@ -983,7 +983,7 @@ elif position == 'Winger':
     y_max_values = {
     'Shots on Target per 90': df_filtered_new['Shots on Target per 90'].max(),
     'Accurate Crosses per 90': df_filtered_new['Accurate Crosses per 90'].max(),
-    'Successful dribbles, %': df_filtered_new['Successful dribbles, %'].max(),
+    # 'Successful dribbles, %': df_filtered_new['Successful dribbles, %'].max(),
     'Accurate passes to penalty area, %': df_filtered_new['Accurate passes to penalty area, %'].max()
            }
     
@@ -992,10 +992,10 @@ elif position == 'Winger':
                                                 'Successful attacking actions per 90': 'Successful Attck. Action/90',
                                                      'Accurate passes to penalty area, %': 'Accurate Passes in PA(%)' })
    
-    fig = px.scatter(df_filtered2, x='Successful Attck. Action/90', y=['Shots on Target per 90','Accurate Crosses per 90', 'Successful dribbles, %','Accurate Passes in PA(%)'], facet_col='variable',
+    fig = px.scatter(df_filtered2, x='Successful Attck. Action/90', y=['Shots on Target per 90','Accurate Crosses per 90', 'Accurate Passes in PA(%)'], facet_col='variable',
                  facet_col_spacing=0.08, color='Player', title='Pressing Threats vs Final Action')
 
-    for i, facet_name in enumerate(['Shots on Target per 90','Accurate Crosses per 90', 'Successful dribbles, %','Accurate Passes in PA(%)']):
+    for i, facet_name in enumerate(['Shots on Target per 90','Accurate Crosses per 90', 'Accurate Passes in PA(%)']):
         # Add horizontal line
         fig.add_shape(
         go.layout.Shape(
