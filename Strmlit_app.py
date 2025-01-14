@@ -982,7 +982,7 @@ elif position == 'Winger':
     y_max_values = {
     'Shots on Target per 90': df_filtered_new['Shots on Target per 90'].max(),
     'Accurate Crosses per 90': df_filtered_new['Accurate Crosses per 90'].max(),
-    'Successful dribbles, %': df_filtered_new['Successful dribbles, %'].max()
+    'Successful dribbles, %': df_filtered_new['Successful dribbles, %'].max(),
     'Accurate passes to penalty area, %': df_filtered_new['Accurate passes to penalty area, %'].max()
            }
     
