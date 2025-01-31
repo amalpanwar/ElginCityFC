@@ -59,7 +59,7 @@ import streamlit as st
 # ******************* Data Loading **************************************
 # df = pd.read_excel("CM_Elgin.xlsx")
 df_CM = pd.read_csv("CM_ElginFC.csv",encoding='ISO-8859-1')
-df_CB = pd.read_csv("CB_ElginFC.csv")
+df_CB = pd.read_csv("CB_ElginFC.csv",encoding='ISO-8859-1')
 df_Wing = pd.read_csv("Wing_ElginFC.csv",encoding='ISO-8859-1')
 df_CF=pd.read_csv("CF_ElginFC.csv",encoding='ISO-8859-1')
 df_GK=pd.read_csv("GK_ElginFC.csv",encoding='ISO-8859-1')
