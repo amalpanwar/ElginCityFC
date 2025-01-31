@@ -711,7 +711,7 @@ elif position == 'CB':
    
     
     fig = px.scatter(df_filtered2, x='Successful def. Action/90', y=['Shots blocked per 90', 'PAdj Interceptions', 'PAdj Sliding tackles'], facet_col='variable',
-                 facet_col_spacing=0.08, color='Player',  title='CM Defensive Actions')
+                 facet_col_spacing=0.08, color='Player',  title='CB Defensive Actions')
 
     for i, facet_name in enumerate(['Shots blocked per 90', 'PAdj Interceptions', 'PAdj Sliding tackles']):
         # Add horizontal line
@@ -802,10 +802,10 @@ elif position == 'CB':
     'Fouls per 90': df_filtered_new['Fouls per 90'].min()
            }
 
-    fig2 = px.scatter(df_filtered2, x='Defensive duels per 90', y=['Defensive duels won, %','Fouls per 90'],facet_col='variable',
-                 facet_col_spacing=0.08,color='Player', title=f'{position} Successful Defense Vs Fouls Committed')
+    fig2 = px.scatter(df_filtered2, x='Defensive duels per 90', y=['Accurate passes to final third/90','Accurate progressive passes/90','Fouls per 90'],facet_col='variable',
+                 facet_col_spacing=0.08,color='Player', title=f'{position} Defender with Progressive ability and Fouls Committed')
   
-    for i, facet_name in enumerate(['Defensive duels won, %','Fouls per 90']):
+    for i, facet_name in enumerate(['Accurate passes to final third/90','Accurate progressive passes/90','Fouls per 90']):
         # Add horizontal line
         fig2.add_shape(
         go.layout.Shape(
