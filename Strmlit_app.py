@@ -806,7 +806,7 @@ elif position == 'CB':
            }
 
     fig2 = px.scatter(df_filtered2, x='Defensive duels per 90', y=['Accurate passes to final third/90','Accurate progressive passes/90','Fouls per 90'],facet_col='variable',
-                 facet_col_spacing=0.08,color='Player', title=f'{position} Defender with Progressive ability and Fouls Committed')
+                 facet_col_spacing=0.08,color='Player', title=f'{position} with Progressive ability and Fouls Committed')
   
     for i, facet_name in enumerate(['Accurate passes to final third/90','Accurate progressive passes/90','Fouls per 90']):
         # Add horizontal line
