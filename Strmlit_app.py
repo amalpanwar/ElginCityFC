@@ -789,16 +789,19 @@ elif position == 'CB':
     # league_avg_row2 = df_filtered_new[df_filtered_new['Player'] == 'League Two Average']
     league_avg_values2 = {
     'Defensive duels per 90': league_avg_row['Defensive duels per 90'].values[0],
-    'Defensive duels won, %': league_avg_row['Defensive duels won, %'].values[0],
+    'Accurate passes to final third/90': league_avg_row['Accurate passes to final third/90'].values[0],
+    'Accurate progressive passes/90': league_avg_row['Accurate progressive passes/90'].values[0],
     'Fouls per 90': league_avg_row['Fouls per 90'].values[0],
           }
     x_max = df_filtered_new['Defensive duels per 90'].max()
     y_max_values = {
-    'Defensive duels won, %': df_filtered_new['Defensive duels won, %'].max(),
+    'Accurate passes to final third/90': df_filtered_new['Accurate passes to final third/90'].max(),
+    'Accurate progressive passes/90': df_filtered_new['Accurate progressive passes/90'].max(),
     'Fouls per 90': df_filtered_new['Fouls per 90'].max()
            }
     y_min_values = {
-    'Defensive duels won, %': df_filtered_new['Defensive duels won, %'].min(),
+    'Accurate passes to final third/90': df_filtered_new['Accurate passes to final third/90'].min(),
+    'Accurate progressive passes/90': df_filtered_new['Accurate progressive passes/90'].min(),
     'Fouls per 90': df_filtered_new['Fouls per 90'].min()
            }
 
