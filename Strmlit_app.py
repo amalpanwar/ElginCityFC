@@ -32,6 +32,7 @@ from langchain_community.embeddings import HuggingFaceHubEmbeddings
 # from langchain_mistralai import ChatMistralAI
 # from langchain_together import ChatTogether
 from langchain_ai21 import ChatAI21
+from langchain_deepseek import ChatDeepSeek
 #from unstructured.partition.xlsx import partition_xlsx
 import networkx as nx
 #import pandas as pd
@@ -324,7 +325,7 @@ def standardize_and_score_football_metrics(df, metrics, weights=None):
 # Streamlit app
 
 # ******************* RAG Pipeline for Chatting ********************************
-AI21_api_key = st.sidebar.text_input('Together API Key')
+llm_api_key = st.sidebar.text_input('LLM API Key')
 api_token = st.sidebar.text_input('API Key', type='password')
 
 
@@ -580,17 +581,17 @@ if position == 'CM':
     
     # Input field for user prompt
    
-    if not AI21_api_key or not api_token:
+    if not llm_api_key or not api_token:
         st.error("Please provide both the AI21 API Key and the API Key.")
     else:
         try:
             # Initialize the LLM model
-            llm = ChatAI21(
-                 model="jamba-instruct-preview",
+            llm = ChatDeepSeek(
+                 model="deepseek-chat",
 #     base_url="https://api.aimlapi.com/chat/completions",
-                 api_key=AI21_api_key,
+                 api_key=llm_api_key,
                  max_tokens=4096,
-                 temprature=0.7,
+                 temprature=0.1,
                  top_p=1,
                  stop=[],
                   )
