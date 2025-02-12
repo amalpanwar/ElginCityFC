@@ -31,7 +31,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_community.embeddings import HuggingFaceHubEmbeddings
 # from langchain_mistralai import ChatMistralAI
 # from langchain_together import ChatTogether
-from langchain_ai21 import ChatAI21
+from langchain_llm import ChatAI21
 from langchain_deepseek import ChatDeepSeek
 #from unstructured.partition.xlsx import partition_xlsx
 import networkx as nx
@@ -582,12 +582,12 @@ if position == 'CM':
     # Input field for user prompt
    
     if not llm_api_key or not api_token:
-        st.error("Please provide both the AI21 API Key and the API Key.")
+        st.error("Please provide both the llm API Key and the API Key.")
     else:
         try:
             # Initialize the LLM model
-            llm = ChatDeepSeek(
-                 model="deepseek-chat",
+            llm = ChatAI21(
+                 model="jamba-instruct-preview",
 #     base_url="https://api.aimlapi.com/chat/completions",
                  api_key=llm_api_key,
                  max_tokens=4096,
@@ -597,7 +597,7 @@ if position == 'CM':
                   )
 
         # Loading document through loader
-            loader = CSVLoader("WW_RB.csv", encoding="windows-1252")
+            loader = CSVLoader("CM_ElginFC.csv", encoding="windows-1252")
             docs = loader.load()
         # st.write("Documents loaded successfully.")
   
@@ -873,17 +873,17 @@ elif position == 'CB':
     st.plotly_chart(fig3)
     
 # AI model
-    if not AI21_api_key or not api_token:
-        st.error("Please provide both the AI21 API Key and the API Key.")
+    if not llm_api_key or not api_token:
+        st.error("Please provide both the llm API Key and the API Key.")
     else:
         try:
             # Initialize the LLM model
             llm = ChatAI21(
                  model="jamba-instruct-preview",
 #     base_url="https://api.aimlapi.com/chat/completions",
-                 api_key=AI21_api_key,
+                 api_key=llm_api_key,
                  max_tokens=4096,
-                 temprature=0.7,
+                 temprature=0.1,
                  top_p=1,
                  stop=[],
                   )
@@ -1212,15 +1212,15 @@ elif position == 'Winger':
     st.plotly_chart(fig3)
 
     # Input for user query
-    if not AI21_api_key or not api_token:
-        st.error("Please provide both the AI21 API Key and the API Key.")
+    if not llm_api_key or not api_token:
+        st.error("Please provide both the llm API Key and the API Key.")
     else:
         try:
             # Initialize the LLM model
             llm = ChatAI21(
                  model="jamba-instruct-preview",
 #     base_url="https://api.aimlapi.com/chat/completions",
-                 api_key=AI21_api_key,
+                 api_key=llm_api_key,
                  max_tokens=4096,
                  temprature=0.7,
                  top_p=1,
@@ -1498,7 +1498,7 @@ elif position == 'CF':
     
     # Input field for user prompt
     # user_prompt = st.text_input("Enter your query:")
-    if not AI21_api_key or not api_token:
+    if not llm_api_key or not api_token:
         st.error("Please provide both the TOGETHER API Key and the API Key.")
     else:
         try:
@@ -1506,7 +1506,7 @@ elif position == 'CF':
             llm = ChatAI21(
                  model="jamba-instruct-preview",
 #     base_url="https://api.aimlapi.com/chat/completions",
-                 api_key=AI21_api_key,
+                 api_key=llm_api_key,
                  max_tokens=4096,
                  temprature=0.7,
                  top_p=1,
@@ -1797,15 +1797,15 @@ elif position == 'GK':
     
     # Input field for user prompt
     # user_prompt = st.text_input("Enter your query:")
-    if not AI21_api_key or not api_token:
-        st.error("Please provide both the AI21 API Key and the API Key.")
+    if not llm_api_key or not api_token:
+        st.error("Please provide both the llm API Key and the API Key.")
     else:
         try:
             # Initialize the LLM model
             llm = ChatAI21(
                  model="jamba-instruct-preview",
 #     base_url="https://api.aimlapi.com/chat/completions",
-                 api_key=AI21_api_key,
+                 api_key=llm_api_key,
                  max_tokens=4096,
                  temprature=0.7,
                  top_p=1,
@@ -2094,15 +2094,15 @@ elif position == 'FB':
     st.plotly_chart(fig3)
     
 # AI model
-    if not AI21_api_key or not api_token:
-        st.error("Please provide both the AI21 API Key and the API Key.")
+    if not llm_api_key or not api_token:
+        st.error("Please provide both the llm API Key and the API Key.")
     else:
         try:
             # Initialize the LLM model
             llm = ChatAI21(
                  model="jamba-instruct-preview",
 #     base_url="https://api.aimlapi.com/chat/completions",
-                 api_key=AI21_api_key,
+                 api_key=llm_api_key,
                  max_tokens=4096,
                  temprature=0.7,
                  top_p=1,
@@ -2423,15 +2423,15 @@ elif position == 'CAM':
     
     # Input field for user prompt
     # user_prompt = st.text_input("Enter your query:")
-    if not AI21_api_key or not api_token:
-        st.error("Please provide both the AI21 API Key and the API Key.")
+    if not llm_api_key or not api_token:
+        st.error("Please provide both the llm API Key and the API Key.")
     else:
         try:
             # Initialize the LLM model
             llm = ChatAI21(
                  model="jamba-instruct-preview",
 #     base_url="https://api.aimlapi.com/chat/completions",
-                 api_key=AI21_api_key,
+                 api_key=llm_api_key,
                  max_tokens=4096,
                  temprature=0.7,
                  top_p=1,
