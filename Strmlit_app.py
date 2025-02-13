@@ -415,11 +415,15 @@ def initialize_rag(csv_file, llm_api_key, api_token):
 
         # Initialize embeddings
         embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-        # Embed all documents
+        
+       # Embed all documents
         document_texts = [doc.page_content for doc in docs]
         document_embeddings = embeddings.embed_documents(document_texts)  # Use embed_documents to handle batch embedding
         
         st.success("✅ HuggingFace Embeddings initialized successfully.")
+
+        # Initialize FAISS vector store
+        vectorstore = FAISS.from_embeddings(document_embeddings, embeddings)
 
         # Initialize FAISS vector store
         vectorstore = FAISS.from_embeddings(document_embeddings, embeddings)
