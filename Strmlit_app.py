@@ -414,21 +414,23 @@ def initialize_rag(csv_file, llm_api_key, api_token):
         embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
         document_embeddings = []
 
+        # Determine a fixed size for embeddings (e.g., the maximum length)
+        max_length = max([len(np.array(embeddings.embed_query(doc.text)).flatten()) for doc in docs])
+
         # Generate embeddings and ensure uniform shape
         for doc in docs:
             # Extract text from the Document object
             doc_text = doc.text if hasattr(doc, 'text') else str(doc)  # Fallback to str if no 'text' attribute
             emb = np.array(embeddings.embed_query(doc_text)).flatten()
+            
+            # Pad or truncate the embedding to match the max_length
+            if emb.shape[0] < max_length:
+                emb = np.pad(emb, (0, max_length - emb.shape[0]), mode='constant')
+            elif emb.shape[0] > max_length:
+                emb = emb[:max_length]
+                
             document_embeddings.append(emb)
             st.write(f"Document embedding shape: {emb.shape}")  # Debug: Check each embedding shape
-
-        # Ensure all embeddings have the same shape
-        embedding_dim = document_embeddings[0].shape[0]
-        document_embeddings = [emb for emb in document_embeddings if emb.shape[0] == embedding_dim]
-        
-        if len(document_embeddings) != len(docs):
-            st.error("❌ Some embeddings had inconsistent shapes. Please check the documents or embedding method.")
-            return None
 
         embeddings_matrix = np.vstack(document_embeddings)
 
