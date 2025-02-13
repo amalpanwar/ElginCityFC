@@ -418,12 +418,12 @@ def initialize_rag(csv_file, llm_api_key, api_token):
         document_embeddings = []
 
         # Determine a fixed size for embeddings (e.g., the maximum length)
-        max_length = max([len(np.array(embeddings.embed_query(doc.text)).flatten()) for doc in docs])
+        max_length = max([len(np.array(embeddings.embed_query(doc.page_content)).flatten()) for doc in docs])
 
         # Generate embeddings and ensure uniform shape
         for doc in docs:
             # Extract the correct text attribute from the Document object
-            doc_text = doc.text if hasattr(doc, 'text') else str(doc)  # Fallback to str if no 'text' attribute
+            doc_text = doc.page_content if hasattr(doc, 'page_content') else str(doc)  # Fallback to str if no 'text' attribute
             emb = np.array(embeddings.embed_query(doc_text)).flatten()
             
             # Pad or truncate the embedding to match the max_length
