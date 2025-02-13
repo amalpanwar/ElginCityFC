@@ -391,7 +391,6 @@ def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), a
         st.stop()  # Prevents further execution but allows UI rendering
     
     try:
-        # Debug message for key entry
         st.write("✅ API Keys provided successfully, initializing...")
 
         # Initialize the LLM model
@@ -403,17 +402,31 @@ def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), a
             top_p=1,
             stop=[]
         )
-        
         st.write("✅ LLM Model initialized successfully.")
 
         # Load document through CSVLoader
         try:
             loader = CSVLoader(csv_file, encoding="windows-1252")
             docs = loader.load()
+            if not docs:
+                st.error("❌ No documents found in the CSV file.")
+                st.stop()
             st.write(f"✅ Successfully loaded {len(docs)} documents.")
         except Exception as e:
             st.error(f"❌ Error loading CSV: {str(e)}")
             logging.error(f"Error loading CSV: {str(e)}")
+            st.stop()
+
+        # Preprocess documents to ensure uniform embeddings
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+        processed_docs = []
+        for doc in docs:
+            if isinstance(doc.page_content, str):  # Ensure content is a string
+                chunks = text_splitter.split_text(doc.page_content)
+                processed_docs.extend(chunks)
+        
+        if not processed_docs:
+            st.error("❌ No valid text found after processing the CSV.")
             st.stop()
         
         # Initialize HuggingFaceHubEmbeddings with the provided API token
@@ -425,9 +438,20 @@ def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), a
             logging.error(f"Error initializing embeddings: {str(e)}")
             st.stop()
 
+        # Ensure embeddings are homogeneous before passing to FAISS
+        try:
+            document_embeddings = [embedding.embed_query(text) for text in processed_docs]
+            document_embeddings = np.array(document_embeddings)  # Convert to uniform NumPy array
+            if len(document_embeddings.shape) != 2:  # FAISS requires 2D shape (n_docs, embedding_dim)
+                raise ValueError("Embeddings have inconsistent shapes.")
+        except Exception as e:
+            st.error(f"❌ Error generating embeddings: {str(e)}")
+            logging.error(f"Error generating embeddings: {str(e)}")
+            st.stop()
+
         # Initialize FAISS vector store
         try:
-            vectorstore = FAISS.from_documents(documents=docs, embedding=embedding)
+            vectorstore = FAISS.from_embeddings(embeddings=document_embeddings, texts=processed_docs)
             retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
             st.write("✅ FAISS vector store initialized successfully.")
         except Exception as e:
@@ -468,6 +492,7 @@ def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), a
     except Exception as e:
         st.error(f"❌ General Error: {str(e)}")
         logging.error(f"General Error: {str(e)}")
+
 
 #  ****************** Title ****************************
 st.title('Player Performance Dashboard')
