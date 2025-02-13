@@ -412,17 +412,28 @@ def initialize_rag(csv_file, llm_api_key, api_token):
 
         # Initialize embeddings
         embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-        # document_embeddings = [np.array(embedding.embed_query(doc)).flatten() for doc in docs]
+        document_embeddings = []
 
-        # Ensure uniform embedding shape
-        # embedding_dim = document_embeddings[0].shape[0]
-        # document_embeddings = [emb for emb in document_embeddings if emb.shape[0] == embedding_dim]
-        # embeddings_matrix = np.vstack(document_embeddings)
+        # Generate embeddings and ensure uniform shape
+        for doc in docs:
+            emb = np.array(embeddings.embed_query(doc)).flatten()
+            document_embeddings.append(emb)
+            st.write(f"Document embedding shape: {emb.shape}")  # Debug: Check each embedding shape
+
+        # Ensure all embeddings have the same shape
+        embedding_dim = document_embeddings[0].shape[0]
+        document_embeddings = [emb for emb in document_embeddings if emb.shape[0] == embedding_dim]
+        
+        if len(document_embeddings) != len(docs):
+            st.error("❌ Some embeddings had inconsistent shapes. Please check the documents or embedding method.")
+            return None
+
+        embeddings_matrix = np.vstack(document_embeddings)
 
         st.success("✅ HuggingFace Embeddings initialized successfully.")
 
         # Initialize FAISS vector store
-        vectorstore = FAISS.from_documents(docs, embeddings)
+        vectorstore = FAISS.from_documents(docs, embeddings_matrix)
         retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
         st.success("✅ FAISS vector store initialized successfully.")
 
