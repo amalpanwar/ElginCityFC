@@ -411,18 +411,18 @@ def initialize_rag(csv_file, llm_api_key, api_token):
         st.success(f"✅ Successfully loaded {len(docs)} documents.")
 
         # Initialize embeddings
-        embedding = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-        document_embeddings = [np.array(embedding.embed_query(doc)).flatten() for doc in docs]
+        embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
+        # document_embeddings = [np.array(embedding.embed_query(doc)).flatten() for doc in docs]
 
         # Ensure uniform embedding shape
-        embedding_dim = document_embeddings[0].shape[0]
-        document_embeddings = [emb for emb in document_embeddings if emb.shape[0] == embedding_dim]
-        embeddings_matrix = np.vstack(document_embeddings)
+        # embedding_dim = document_embeddings[0].shape[0]
+        # document_embeddings = [emb for emb in document_embeddings if emb.shape[0] == embedding_dim]
+        # embeddings_matrix = np.vstack(document_embeddings)
 
         st.success("✅ HuggingFace Embeddings initialized successfully.")
 
         # Initialize FAISS vector store
-        vectorstore = FAISS.from_documents(docs, embeddings_matrix)
+        vectorstore = FAISS.from_documents(docs, embeddings)
         retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
         st.success("✅ FAISS vector store initialized successfully.")
 
