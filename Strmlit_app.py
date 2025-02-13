@@ -388,118 +388,50 @@ api_token = st.sidebar.text_input('API Key', type='password')
 
 def initialize_rag(csv_file, llm_api_key, api_token):
     if not llm_api_key or not api_token:
-        st.error("Please provide both the LLM API Key and the API Key.")
-        st.stop()
+        st.error("❌ Please provide both the LLM API Key and the API Token.")
+        return None
+
+    st.success("✅ API Keys provided successfully, initializing...")
 
     try:
-        st.write("✅ API Keys provided successfully, initializing...")
-
-        # Initialize the LLM model
+        # Initialize LLM model
         llm = ChatAI21(
             model="jamba-1.5-large",
             api_key=llm_api_key,
             max_tokens=4096,
             temprature=0.1,
             top_p=1,
-            stop=[]
+            stop=[],
         )
-        st.write("✅ LLM Model initialized successfully.")
+        st.success("✅ LLM Model initialized successfully.")
 
-        # Load document through CSVLoader
-        try:
-            loader = CSVLoader(csv_file, encoding="windows-1252")
-            docs = loader.load()
-            if not docs:
-                st.error("❌ No documents found in the CSV file.")
-                st.stop()
-            st.write(f"✅ Successfully loaded {len(docs)} documents.")
-        except Exception as e:
-            st.error(f"❌ Error loading CSV: {str(e)}")
-            logging.error(f"Error loading CSV: {str(e)}")
-            st.stop()
+        # Load CSV document
+        loader = CSVLoader(csv_file, encoding="windows-1252")
+        docs = loader.load()
+        st.success(f"✅ Successfully loaded {len(docs)} documents.")
 
-        # Ensure documents are properly formatted
-        processed_texts = [doc.page_content.strip() for doc in docs if isinstance(doc.page_content, str)]
-        if not processed_texts:
-            st.error("❌ No valid text found in the CSV.")
-            st.stop()
+        # Initialize embeddings
+        embedding = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
+        document_embeddings = [np.array(embedding.embed_query(doc)).flatten() for doc in docs]
 
-        # Initialize HuggingFaceHubEmbeddings
-        try:
-            embedding = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-            st.write("✅ HuggingFace Embeddings initialized successfully.")
-        except Exception as e:
-            st.error(f"❌ Error initializing embeddings: {str(e)}")
-            logging.error(f"Error initializing embeddings: {str(e)}")
-            st.stop()
+        # Ensure uniform embedding shape
+        embedding_dim = document_embeddings[0].shape[0]
+        document_embeddings = [emb for emb in document_embeddings if emb.shape[0] == embedding_dim]
+        embeddings_matrix = np.vstack(document_embeddings)
 
-        # Generate embeddings and check for shape consistency
-        document_embeddings = []
-        valid_texts = []
-
-        for text in processed_texts:
-            try:
-                emb = np.array(embedding.embed_query(text)).flatten()
-                if len(emb.shape) == 1:  # Ensure it's a vector (1D)
-                    document_embeddings.append(emb)
-                    valid_texts.append(text)
-                else:
-                    logging.warning(f"Skipping document with invalid embedding shape: {emb.shape}")
-            except Exception as e:
-                logging.warning(f"Skipping document due to embedding error: {str(e)}")
-
-        # Convert to NumPy array only if all embeddings are uniform
-        if len(set([len(emb) for emb in document_embeddings])) == 1:
-            document_embeddings = np.stack(document_embeddings)
-            st.write(f"✅ Embeddings generated successfully. Shape: {document_embeddings.shape}")
-        else:
-            st.error("❌ Inconsistent embedding shapes detected. Check input documents.")
-            logging.error("Inconsistent embedding shapes detected.")
-            st.stop()
+        st.success("✅ HuggingFace Embeddings initialized successfully.")
 
         # Initialize FAISS vector store
-        try:
-            vectorstore = FAISS.from_embeddings(embeddings=document_embeddings, texts=valid_texts)
-            retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
-            st.write("✅ FAISS vector store initialized successfully.")
-        except Exception as e:
-            st.error(f"❌ Error initializing FAISS: {str(e)}")
-            logging.error(f"Error initializing FAISS vector store: {str(e)}")
-            st.stop()
+        vectorstore = FAISS.from_documents(docs, embeddings_matrix)
+        retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
+        st.success("✅ FAISS vector store initialized successfully.")
 
-        # Preparing Prompt for Q/A
-        system_prompt = (
-            "You are an assistant for question-answering tasks. "
-            "Use the following pieces of retrieved context to answer "
-            "the question. If you don't know the answer, say that you "
-            "don't know. Use three sentences minimum and keep the "
-            "answer concise."
-            "\n\n"
-            "{context}"
-        )
-        
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", system_prompt),
-            ("human", "{input}")
-        ])
-        
-        question_answer_chain = create_stuff_documents_chain(llm, prompt)
-        rag_chain = create_retrieval_chain(retriever, question_answer_chain)
-
-        # Ensure the text input box always appears
-        user_prompt = st.text_input("Enter your query:")
-        
-        if user_prompt:
-            try:
-                response = rag_chain.invoke({"input": user_prompt})
-                st.write(f"📝 Answer: {response['answer']}")
-            except Exception as e:
-                st.error(f"❌ Error processing query: {str(e)}")
-                logging.error(f"Error processing query: {str(e)}")
+        return retriever, llm
 
     except Exception as e:
-        st.error(f"❌ General Error: {str(e)}")
-        logging.error(f"General Error: {str(e)}")
+        logging.error(f"❌ Error: {str(e)}")
+        st.error(f"❌ Error: {str(e)}")
+        return None
 
 
 
@@ -754,7 +686,15 @@ if position == 'CM':
     st.plotly_chart(fig3)
     
     #Input field for user prompt
-    initialize_rag("CM_ElginFC.csv",llm_api_key, api_token)
+    if csv_file and llm_api_key and api_token:
+        result = initialize_rag("CM_ElginFC.csv",llm_api_key, api_token)
+        if result:
+            retriever, llm = result
+            user_prompt = st.text_input("Enter your query:")
+            if user_prompt:
+                response = retriever.invoke({"input": user_prompt})
+                st.write(response["answer"])
+    # initialize_rag("CM_ElginFC.csv",llm_api_key, api_token)
     
     
 
