@@ -686,7 +686,7 @@ if position == 'CM':
     st.plotly_chart(fig3)
     
     #Input field for user prompt
-    if csv_file and llm_api_key and api_token:
+    if llm_api_key and api_token:
         result = initialize_rag("CM_ElginFC.csv",llm_api_key, api_token)
         if result:
             retriever, llm = result
