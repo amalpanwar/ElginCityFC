@@ -415,32 +415,14 @@ def initialize_rag(csv_file, llm_api_key, api_token):
 
         # Initialize embeddings
         embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-        document_embeddings = []
-
-        # Determine a fixed size for embeddings (e.g., the maximum length)
-        max_length = max([len(np.array(embeddings.embed_query(doc.page_content)).flatten()) for doc in docs])
-
-        # Generate embeddings and ensure uniform shape
-        for doc in docs:
-            # Extract the correct text attribute from the Document object
-            doc_text = doc.page_content if hasattr(doc, 'page_content') else str(doc)  # Fallback to str if no 'text' attribute
-            emb = np.array(embeddings.embed_query(doc_text)).flatten()
-            
-            # Pad or truncate the embedding to match the max_length
-            if emb.shape[0] < max_length:
-                emb = np.pad(emb, (0, max_length - emb.shape[0]), mode='constant')
-            elif emb.shape[0] > max_length:
-                emb = emb[:max_length]
-                
-            document_embeddings.append(emb)
-            st.write(f"Document embedding shape: {emb.shape}")  # Debug: Check each embedding shape
-
-        embeddings_matrix = np.vstack(document_embeddings)
-
+        # Embed all documents
+        document_texts = [doc.page_content for doc in docs]
+        document_embeddings = embeddings.embed_documents(document_texts)  # Use embed_documents to handle batch embedding
+        
         st.success("✅ HuggingFace Embeddings initialized successfully.")
 
         # Initialize FAISS vector store
-        vectorstore = FAISS.from_documents(docs, embeddings_matrix)
+        vectorstore = FAISS.from_embeddings(document_embeddings, embeddings)
         retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
         st.success("✅ FAISS vector store initialized successfully.")
 
