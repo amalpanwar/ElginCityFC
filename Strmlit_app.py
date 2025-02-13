@@ -587,7 +587,7 @@ if position == 'CM':
         try:
             # Initialize the LLM model
             llm = ChatAI21(
-                 model="jamba-instruct-preview",
+                 model="jamba-1.5-large",
 #     base_url="https://api.aimlapi.com/chat/completions",
                  api_key=llm_api_key,
                  max_tokens=4096,
@@ -879,7 +879,7 @@ elif position == 'CB':
         try:
             # Initialize the LLM model
             llm = ChatAI21(
-                 model="jamba-instruct-preview",
+                 model="jamba-1.5-large",
 #     base_url="https://api.aimlapi.com/chat/completions",
                  api_key=llm_api_key,
                  max_tokens=4096,
@@ -1218,7 +1218,7 @@ elif position == 'Winger':
         try:
             # Initialize the LLM model
             llm = ChatAI21(
-                 model="jamba-instruct-preview",
+                 model="jamba-1.5-large",
 #     base_url="https://api.aimlapi.com/chat/completions",
                  api_key=llm_api_key,
                  max_tokens=4096,
@@ -1504,7 +1504,7 @@ elif position == 'CF':
         try:
             # Initialize the LLM model
             llm = ChatAI21(
-                 model="jamba-instruct-preview",
+                 model="jamba-1.5-large",
 #     base_url="https://api.aimlapi.com/chat/completions",
                  api_key=llm_api_key,
                  max_tokens=4096,
@@ -1803,7 +1803,7 @@ elif position == 'GK':
         try:
             # Initialize the LLM model
             llm = ChatAI21(
-                 model="jamba-instruct-preview",
+                 model="jamba-1.5-large",
 #     base_url="https://api.aimlapi.com/chat/completions",
                  api_key=llm_api_key,
                  max_tokens=4096,
@@ -2100,7 +2100,7 @@ elif position == 'FB':
         try:
             # Initialize the LLM model
             llm = ChatAI21(
-                 model="jamba-instruct-preview",
+                 model="jamba-1.5-large",
 #     base_url="https://api.aimlapi.com/chat/completions",
                  api_key=llm_api_key,
                  max_tokens=4096,
@@ -2429,7 +2429,7 @@ elif position == 'CAM':
         try:
             # Initialize the LLM model
             llm = ChatAI21(
-                 model="jamba-instruct-preview",
+                 model="jamba-1.5-large",
 #     base_url="https://api.aimlapi.com/chat/completions",
                  api_key=llm_api_key,
                  max_tokens=4096,
