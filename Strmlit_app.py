@@ -419,7 +419,7 @@ def initialize_rag(csv_file, llm_api_key, api_token):
 
         # Generate embeddings and ensure uniform shape
         for doc in docs:
-            # Extract text from the Document object
+            # Extract the correct text attribute from the Document object
             doc_text = doc.text if hasattr(doc, 'text') else str(doc)  # Fallback to str if no 'text' attribute
             emb = np.array(embeddings.embed_query(doc_text)).flatten()
             
