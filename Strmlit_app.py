@@ -409,6 +409,9 @@ def initialize_rag(csv_file, llm_api_key, api_token):
         loader = CSVLoader(csv_file, encoding="windows-1252")
         docs = loader.load()
         st.success(f"✅ Successfully loaded {len(docs)} documents.")
+        if len(docs) > 0:
+            st.write(f"Sample document structure: {vars(docs[0])}")  # Debug: View the document's attributes
+
 
         # Initialize embeddings
         embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
