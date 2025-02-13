@@ -383,14 +383,14 @@ def standardize_and_score_football_metrics(df, metrics, weights=None):
         
 #     except Exception as e:
 #         logging.error(f"Error: {str(e)}")
-# # llm_api_key = st.sidebar.text_input('LLM API Key')
-# #api_token = st.sidebar.text_input('API Key', type='password')
+llm_api_key = st.sidebar.text_input('LLM API Key')
+api_token = st.sidebar.text_input('API Key', type='password')
 
-def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), api_token=st.sidebar.text_input('API Key', type='password')):
+def initialize_rag(csv_file, llm_api_key, api_token):
     if not llm_api_key or not api_token:
         st.error("Please provide both the LLM API Key and the API Key.")
         st.stop()
-    
+
     try:
         st.write("✅ API Keys provided successfully, initializing...")
 
@@ -433,23 +433,33 @@ def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), a
             logging.error(f"Error initializing embeddings: {str(e)}")
             st.stop()
 
-        # Convert embeddings into a uniform 2D NumPy array
-        try:
-            document_embeddings = [np.array(embedding.embed_query(text)).flatten() for text in processed_texts]
-            document_embeddings = np.stack(document_embeddings)  # Ensures a uniform (n_docs, embedding_dim) shape
+        # Generate embeddings and check for shape consistency
+        document_embeddings = []
+        valid_texts = []
 
-            if len(document_embeddings.shape) != 2:  # FAISS requires 2D shape (n_docs, embedding_dim)
-                raise ValueError(f"Embeddings have inconsistent shapes: {document_embeddings.shape}")
+        for text in processed_texts:
+            try:
+                emb = np.array(embedding.embed_query(text)).flatten()
+                if len(emb.shape) == 1:  # Ensure it's a vector (1D)
+                    document_embeddings.append(emb)
+                    valid_texts.append(text)
+                else:
+                    logging.warning(f"Skipping document with invalid embedding shape: {emb.shape}")
+            except Exception as e:
+                logging.warning(f"Skipping document due to embedding error: {str(e)}")
 
+        # Convert to NumPy array only if all embeddings are uniform
+        if len(set([len(emb) for emb in document_embeddings])) == 1:
+            document_embeddings = np.stack(document_embeddings)
             st.write(f"✅ Embeddings generated successfully. Shape: {document_embeddings.shape}")
-        except Exception as e:
-            st.error(f"❌ Error generating embeddings: {str(e)}")
-            logging.error(f"Error generating embeddings: {str(e)}")
+        else:
+            st.error("❌ Inconsistent embedding shapes detected. Check input documents.")
+            logging.error("Inconsistent embedding shapes detected.")
             st.stop()
 
         # Initialize FAISS vector store
         try:
-            vectorstore = FAISS.from_embeddings(embeddings=document_embeddings, texts=processed_texts)
+            vectorstore = FAISS.from_embeddings(embeddings=document_embeddings, texts=valid_texts)
             retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
             st.write("✅ FAISS vector store initialized successfully.")
         except Exception as e:
@@ -490,6 +500,7 @@ def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), a
     except Exception as e:
         st.error(f"❌ General Error: {str(e)}")
         logging.error(f"General Error: {str(e)}")
+
 
 
 #  ****************** Title ****************************
@@ -743,7 +754,7 @@ if position == 'CM':
     st.plotly_chart(fig3)
     
     #Input field for user prompt
-    initialize_rag("CM_ElginFC.csv")
+    initialize_rag("CM_ElginFC.csv",llm_api_key, api_token)
     
     
 
