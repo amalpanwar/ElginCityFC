@@ -414,18 +414,21 @@ def initialize_rag(csv_file, llm_api_key, api_token):
 
 
         # Initialize embeddings
+        # Extract document text content
+        document_texts = [doc.page_content for doc in docs]  # Correct way to access text
+
+        # Initialize embeddings
         embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-        
-       # Embed all documents
-        document_texts = [doc.page_content for doc in docs]
-        document_embeddings = embeddings.embed_documents(document_texts)  # Use embed_documents to handle batch embedding
-        
         st.success("✅ HuggingFace Embeddings initialized successfully.")
 
-        # Initialize FAISS vector store
-        vectorstore = FAISS.from_embeddings(document_embeddings, embeddings)
+        # Embed documents
+        document_embeddings = embeddings.embed_documents(document_texts)  # Get embeddings
 
-        # Initialize FAISS vector store
+        # Ensure embeddings are in the correct format
+        if isinstance(document_embeddings, np.ndarray):  
+            document_embeddings = document_embeddings.tolist()  # Convert NumPy array to list
+        
+        # Initialize FAISS vector store (fixing unpacking issue)
         vectorstore = FAISS.from_embeddings(document_embeddings, embeddings)
         retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
         st.success("✅ FAISS vector store initialized successfully.")
