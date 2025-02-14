@@ -389,47 +389,64 @@ def standardize_and_score_football_metrics(df, metrics, weights=None):
 #         logging.error(f"Error: {str(e)}")
 
 
+logging.basicConfig(level=logging.DEBUG)
+
 def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), api_token=st.sidebar.text_input('API Key', type='password')):
     if not llm_api_key or not api_token:
         st.error("Please provide both the LLM API Key and the API Key.")
+        logging.error("Missing API keys: LLM API Key or API Key not provided.")
         return
 
     try:
-        # Connect to Milvus
+        logging.info("🔹 Connecting to Milvus...")
         connections.connect(alias="default", host="localhost", port="19530")
-        
+        logging.info("✅ Successfully connected to Milvus!")
+
         # Initialize LLM Model
+        logging.info("🔹 Initializing LLM Model (Jamba-1.5-Large)...")
         llm = ChatAI21(
             model_name="jamba-1.5-large",
             openai_api_key=llm_api_key,
             temperature=0.1,
             max_tokens=4096
         )
-        
+        logging.info("✅ LLM Model initialized successfully!")
+
         # Load documents from CSV
+        logging.info(f"🔹 Loading CSV file: {csv_file}")
         loader = CSVLoader(csv_file, encoding="windows-1252")
         docs = loader.load()
+        logging.info(f"✅ Successfully loaded {len(docs)} documents from CSV!")
 
         # Initialize HuggingFace Embeddings
+        logging.info("🔹 Initializing HuggingFace Embeddings...")
         embeddings = HuggingFaceEmbeddings()
+        logging.info("✅ HuggingFace Embeddings initialized successfully!")
 
         # Define collection name
         collection_name = "documents"
 
         # Initialize Milvus vector store
+        logging.info(f"🔹 Initializing Milvus vector store with collection: {collection_name}...")
         vectorstore = Milvus(
             embedding_function=embeddings,
             collection_name=collection_name,
             connection_args={"host": "localhost", "port": "19530"}
         )
+        logging.info("✅ Milvus vector store initialized!")
 
         # Insert documents into Milvus
+        logging.info("🔹 Inserting documents into Milvus...")
         vectorstore.add_documents(docs)
+        logging.info("✅ Documents successfully inserted into Milvus!")
 
         # Create retriever
+        logging.info("🔹 Creating retriever from Milvus vector store...")
         retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={'k': 20})
+        logging.info("✅ Retriever created successfully!")
 
         # Define prompt
+        logging.info("🔹 Setting up system prompt...")
         system_prompt = (
             "You are an assistant for question-answering tasks. "
             "Use the following pieces of retrieved context to answer "
@@ -438,23 +455,30 @@ def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), a
             "\n\n"
             "{context}"
         )
+        logging.info("✅ System prompt set!")
 
         prompt = ChatPromptTemplate.from_messages([
             ("system", system_prompt),
             ("human", "{input}")
         ])
 
+        # Create chains
+        logging.info("🔹 Creating document retrieval and question-answering chains...")
         question_answer_chain = create_stuff_documents_chain(llm, prompt)
         rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+        logging.info("✅ Chains created successfully!")
 
         # User input
         user_prompt = st.text_input("Enter your query:")
         if user_prompt:
+            logging.info(f"🔹 Received user query: {user_prompt}")
             response = rag_chain.invoke({"input": user_prompt})
+            logging.info("✅ Response generated successfully!")
             st.write(response["answer"])
 
     except Exception as e:
-        logging.error(f"Error: {str(e)}")
+        logging.error(f"❌ Error in initialize_rag: {str(e)}")
+        st.error(f"An error occurred: {str(e)}")
 #  ****************** Title ****************************
 st.title('Player Performance Dashboard')
 
