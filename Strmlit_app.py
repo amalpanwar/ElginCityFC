@@ -730,70 +730,92 @@ if position == 'CM':
 # Reverse the color scale so that higher values are darker
     fig3.update_layout(coloraxis_colorbar=dict(title="Aerial duels won per 90"))
     st.plotly_chart(fig3)
-    
-   # def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), api_token=st.sidebar.text_input('API Key', type='password')):
+    # Configure logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+# Get API Keys from UI
+    llm_api_key = st.sidebar.text_input("LLM API Key")
+    api_token = st.sidebar.text_input("API Key", type="password")
+
     if not llm_api_key or not api_token:
-        st.error("Please provide both the llm API Key and the API Key.")
+         st.error("Please provide both the LLM API Key and the API Key.")
+         logging.error("API Keys are missing.")
     else:
         try:
-            # Initialize the LLM model
+        # Initialize the LLM model
+            logging.info("Initializing LLM model...")
             llm = ChatAI21(
-                 model="jamba-1.5-large",
-#     base_url="https://api.aimlapi.com/chat/completions",
-                 api_key=llm_api_key,
-                 max_tokens=4096,
-                 temperature=0.1,
-                 top_p=1,
-                 stop=[],
-                  )
-
-        # Loading document through loader
-            loader = CSVLoader("CM_ElginFC.csv", encoding="windows-1252")
-            docs = loader.load()
-            logging.info("Documents loaded successfully.")
-  
-        # Initialize HuggingFaceHubEmbeddings with the provided API token
-            embedding = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-            logging.info("HuggingFaceHubEmbeddings initialized successfully.")
-
-        # Initialize Chroma vector store
-            try:
-                vectorstore = FAISS.from_documents(documents=docs, embedding=embedding)
-                logging.info("FAISS vector store initialized successfully.")
-                retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
-                
-            except Exception as e:
-                 logging.error(f"Error initializing FAISS vector store: {str(e)}")
-                 # st.error(f"Error initializing Chroma vector store: {str(e)}")
-        # Preparing Prompt for Q/A
-            system_prompt = (
-             "You are an assistant for question-answering tasks. "
-             "Use the following pieces of retrieved context to answer "
-             "the question. If you don't know the answer, say that you "
-             "don't know. Use three sentences minimum and keep the "
-             "answer concise."
-             "\n\n"
-             "{context}"
+            model="jamba-1.5-large",
+            api_key=llm_api_key,
+            max_tokens=4096,
+            temperature=0.1,  # Fixed typo from `temprature` to `temperature`
+            top_p=1,
+            stop=[],
               )
+            logging.info("LLM model initialized successfully.")
 
-            prompt = ChatPromptTemplate.from_messages(
-                  [
-                   ("system", system_prompt),
-                    ("human", "{input}"),
-                     ]
-                    )
+        # Verify that the CSV file exists
+            csv_file = "CM_ElginFC.csv"
+            if not os.path.exists(csv_file):
+                logging.error(f"CSV file not found: {csv_file}")
+                st.error(f"CSV file not found: {csv_file}")
+            else:
+            # Loading document through loader
+                logging.info(f"Loading document: {csv_file}")
+                loader = CSVLoader(csv_file, encoding="windows-1252")
+                docs = loader.load()
+                logging.info(f"Documents loaded successfully. Found {len(docs)} documents.")
 
-            question_answer_chain = create_stuff_documents_chain(llm, prompt)
-            rag_chain = create_retrieval_chain(retriever, question_answer_chain)
-            user_prompt = st.text_input("Enter your query:")
-            if user_prompt:
-    # Get response from RAG chain
-                   response = rag_chain.invoke({"input": user_prompt})
-                   st.write(response["answer"])
+            # Initialize HuggingFaceHubEmbeddings with the provided API token
+                logging.info("Initializing HuggingFaceHubEmbeddings...")
+                embedding = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
+                logging.info("HuggingFaceHubEmbeddings initialized successfully.")
 
-        # st.success("Chroma vector store initialized successfully.")
+            # Initialize FAISS vector store
+                try:
+                    logging.info("Initializing FAISS vector store...")
+                    vectorstore = FAISS.from_documents(documents=docs, embedding=embedding)
+                    retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
+                    logging.info("FAISS vector store initialized successfully.")
+
+                # Preparing Prompt for Q/A
+                    system_prompt = (
+                    "You are an assistant for question-answering tasks. "
+                    "Use the following pieces of retrieved context to answer "
+                    "the question. If you don't know the answer, say that you "
+                    "don't know. Use three sentences minimum and keep the "
+                    "answer concise."
+                    "\n\n"
+                    "{context}"
+                     )
+
+                    prompt = ChatPromptTemplate.from_messages([
+                       ("system", system_prompt),
+                       ("human", "{input}"),
+                       ])
+
+                    logging.info("Initializing question-answer chain...")
+                    question_answer_chain = create_stuff_documents_chain(llm, prompt)
+                    rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+                    logging.info("RAG chain initialized successfully.")
+
+                # User input
+                    user_prompt = st.text_input("Enter your query:")
+                    if user_prompt:
+                        logging.info(f"Processing user query: {user_prompt}")
+                        response = rag_chain.invoke({"input": user_prompt})
+                        st.write(response.get("answer", "No answer found."))
+                        logging.info("Response generated successfully.")
+
+               except Exception as e:
+                    logging.error(f"Error initializing FAISS vector store: {str(e)}")
+                    st.error(f"Error initializing FAISS vector store: {str(e)}")
+
         except Exception as e:
-                logging.error(f"Error: {str(e)}")
+            logging.error(f"Unexpected error: {str(e)}")
+            st.error(f"An error occurred: {str(e)}")
+        
+    
     
     # initialize_rag('CM_ElginFC.csv')
     
