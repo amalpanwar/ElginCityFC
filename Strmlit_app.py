@@ -326,111 +326,63 @@ def standardize_and_score_football_metrics(df, metrics, weights=None):
 # Streamlit app
 
 # ******************* RAG Pipeline for Chatting ********************************
-# def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), api_token=st.sidebar.text_input('API Key', type='password')):
-#     if not llm_api_key or not api_token:
-#         st.error("Please provide both the LLM API Key and the API Key.")
-#         return
+def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), api_token=st.sidebar.text_input('API Key', type='password')):
+    if not llm_api_key or not api_token:
+        st.error("Please provide both the LLM API Key and the API Key.")
+        return
     
-#     try:
-#         # Initialize the LLM model
-#         llm = ChatAI21(
-#             model="jamba-1.5-large",
-#             api_key=llm_api_key,
-#             max_tokens=4096,
-#             temprature=0.1,
-#             top_p=1,
-#             stop=[]
-#         )
-        
-#         # Load document through CSVLoader
-#         loader = CSVLoader(csv_file, encoding="windows-1252")
-#         docs = loader.load()
-        
-#         # Initialize HuggingFaceHubEmbeddings with the provided API token
-#         embedding = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-        
-#         # Initialize Chroma vector store
-#         try:
-#             vectorstore = FAISS.from_documents(documents=docs, embedding=embedding)
-#             retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
-#         except Exception as e:
-#             logging.error(f"Error initializing FAISS vector store: {str(e)}")
-#             return
-        
-#         # Preparing Prompt for Q/A
-#         system_prompt = (
-#             "You are an assistant for question-answering tasks. "
-#             "Use the following pieces of retrieved context to answer "
-#             "the question. If you don't know the answer, say that you "
-#             "don't know. Use three sentences minimum and keep the "
-#             "answer concise."
-#             "\n\n"
-#             "{context}"
-#         )
-        
-#         prompt = ChatPromptTemplate.from_messages([
-#             ("system", system_prompt),
-#             ("human", "{input}")
-#         ])
-        
-#         question_answer_chain = create_stuff_documents_chain(llm, prompt)
-#         rag_chain = create_retrieval_chain(retriever, question_answer_chain)
-        
-#         user_prompt = st.text_input("Enter your query:")
-#         if user_prompt:
-#             response = rag_chain.invoke({"input": user_prompt})
-#             st.write(response["answer"])
-        
-#     except Exception as e:
-#         logging.error(f"Error: {str(e)}")
-
-llm_api_key = st.sidebar.text_input('LLM API Key')
-api_token = st.sidebar.text_input('API Key', type='password')
-
-def initialize_rag(csv_file, llm_api_key, api_token):
-    
-        
-
-    st.success("✅ API Keys provided successfully, initializing...")
-
     try:
-        # Initialize LLM model
+        # Initialize the LLM model
         llm = ChatAI21(
             model="jamba-1.5-large",
             api_key=llm_api_key,
             max_tokens=4096,
             temprature=0.1,
             top_p=1,
-            stop=[],
+            stop=[]
         )
-        st.success("✅ LLM Model initialized successfully.")
-
-        # Load CSV document
+        
+        # Load document through CSVLoader
         loader = CSVLoader(csv_file, encoding="windows-1252")
         docs = loader.load()
-        st.success(f"✅ Successfully loaded {len(docs)} documents.")
-        if len(docs) > 0:
-            st.write(f"Sample document structure: {vars(docs[0])}")  # Debug: View the document's attributes
-
-
-
-        # Initialize embeddings
-        embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
         
-
-
+        # Initialize HuggingFaceHubEmbeddings with the provided API token
+        embedding = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
         
-        # Initialize FAISS vector store (fixing unpacking issue)
-        vectorstore = FAISS.from_documents(documents=docs, embedding=embeddings)
-        retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
-        st.success("✅ FAISS vector store initialized successfully.")
-
-        return retriever, llm
-
+        # Initialize Chroma vector store
+        try:
+            vectorstore = FAISS.from_documents(documents=docs, embedding=embedding)
+            retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
+        except Exception as e:
+            logging.error(f"Error initializing FAISS vector store: {str(e)}")
+            return
+        
+        # Preparing Prompt for Q/A
+        system_prompt = (
+            "You are an assistant for question-answering tasks. "
+            "Use the following pieces of retrieved context to answer "
+            "the question. If you don't know the answer, say that you "
+            "don't know. Use three sentences minimum and keep the "
+            "answer concise."
+            "\n\n"
+            "{context}"
+        )
+        
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", system_prompt),
+            ("human", "{input}")
+        ])
+        
+        question_answer_chain = create_stuff_documents_chain(llm, prompt)
+        rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+        
+        user_prompt = st.text_input("Enter your query:")
+        if user_prompt:
+            response = rag_chain.invoke({"input": user_prompt})
+            st.write(response["answer"])
+        
     except Exception as e:
-        logging.error(f"❌ Error: {str(e)}")
-        st.error(f"❌ Error: {str(e)}")
-        return None
+        logging.error(f"Error: {str(e)}")
 
 
 
@@ -685,17 +637,18 @@ if position == 'CM':
     st.plotly_chart(fig3)
     
     #Input field for user prompt
-    if not llm_api_key or not api_token:
-        st.error("❌ Please provide both the LLM API Key and the API Token.")
-    else:
-        result = initialize_rag("CM_ElginFC.csv",llm_api_key, api_token)
-        if result:
-            retriever, llm = result
-            user_prompt = st.text_input("Enter your query:")
-            if user_prompt:
-                response = retriever.invoke({"input": user_prompt})
-                st.write(response["answer"])
-    # initialize_rag("CM_ElginFC.csv",llm_api_key, api_token)
+    # if not llm_api_key or not api_token:
+    #     st.error("❌ Please provide both the LLM API Key and the API Token.")
+    # else:
+    #     result = initialize_rag("CM_ElginFC.csv",llm_api_key, api_token)
+    #     if result:
+    #         retriever, llm = result
+    #         user_prompt = st.text_input("Enter your query:")
+    #         if user_prompt:
+    #             response = retriever.invoke({"input": user_prompt})
+    #             st.write(response["answer"])
+    
+    initialize_rag("CM_ElginFC.csv")
     
     
 
