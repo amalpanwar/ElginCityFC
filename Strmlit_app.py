@@ -750,20 +750,20 @@ if position == 'CM':
         # Loading document through loader
             loader = CSVLoader("CM_ElginFC.csv", encoding="windows-1252")
             docs = loader.load()
-        # st.write("Documents loaded successfully.")
+            st.write("Documents loaded successfully.")
   
         # Initialize HuggingFaceHubEmbeddings with the provided API token
             embedding = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-        # st.write("HuggingFaceHubEmbeddings initialized successfully.")
+            st.write("HuggingFaceHubEmbeddings initialized successfully.")
 
         # Initialize Chroma vector store
             try:
                 vectorstore = FAISS.from_documents(documents=docs, embedding=embedding)
                 retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
-            # st.success("Chroma vector store initialized successfully.")
+                st.success("FAISS vector store initialized successfully.")
             except Exception as e:
                  logging.error(f"Error initializing FAISS vector store: {str(e)}")
-            # st.error(f"Error initializing Chroma vector store: {str(e)}")
+                 st.error(f"Error initializing Chroma vector store: {str(e)}")
         # Preparing Prompt for Q/A
             system_prompt = (
              "You are an assistant for question-answering tasks. "
