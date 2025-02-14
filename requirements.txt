@@ -19,6 +19,7 @@ scipy
 seaborn
 langchain-ai21
 mplcursors
-chromadb==0.2.1
+chromadb
+langchain-chroma
 
 
