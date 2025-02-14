@@ -19,7 +19,7 @@ import os
 # from dotenv import load_dotenv
 from langchain import hub
 # import chromadb
-from langchain.vectorstores import Chroma
+# from langchain.vectorstores import Chroma
 # from langchain_community.vectorstores import Chroma
 # from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
