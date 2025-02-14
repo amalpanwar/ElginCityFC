@@ -399,7 +399,7 @@ def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), a
 
     try:
         logging.info("🔹 Connecting to Milvus...")
-        connections.connect(alias="default", host="localhost", port="19530")
+        connections.connect(alias="default", host="milvus", port="19530")
         logging.info("✅ Successfully connected to Milvus!")
 
         # Initialize LLM Model
