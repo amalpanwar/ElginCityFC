@@ -2,6 +2,8 @@
 # coding: utf-8
 
 import numpy as np
+from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection
+from langchain_community.vectorstores import Milvus
 import matplotlib.pyplot as plt
 import mplcursors
 import seaborn as sns
@@ -327,66 +329,132 @@ def standardize_and_score_football_metrics(df, metrics, weights=None):
 # Streamlit app
 
 # ******************* RAG Pipeline for Chatting ********************************
+# def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), api_token=st.sidebar.text_input('API Key', type='password')):
+#     if not llm_api_key or not api_token:
+#         st.error("Please provide both the LLM API Key and the API Key.")
+#         return
+    
+#     try:
+#         # Initialize the LLM model
+#         llm = ChatAI21(
+#             model="jamba-1.5-large",
+#             api_key=llm_api_key,
+#             max_tokens=4096,
+#             temprature=0.1,
+#             top_p=1,
+#             stop=[]
+#         )
+        
+#         # Load document through CSVLoader
+#         loader = CSVLoader(csv_file, encoding="windows-1252")
+#         docs = loader.load()
+        
+#         # Initialize HuggingFaceHubEmbeddings with the provided API token
+#         embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
+        
+#         # Initialize FAISS vector store
+#         try:
+            
+#             vectorstore = FAISS.from_documents(documents=docs, embedding=embeddings)
+#             retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
+#         except Exception as e:
+#             logging.error(f"Error initializing FAISS vector store: {str(e)}")
+#             return
+        
+#         # Preparing Prompt for Q/A
+#         system_prompt = (
+#             "You are an assistant for question-answering tasks. "
+#             "Use the following pieces of retrieved context to answer "
+#             "the question. If you don't know the answer, say that you "
+#             "don't know. Use three sentences minimum and keep the "
+#             "answer concise."
+#             "\n\n"
+#             "{context}"
+#         )
+        
+#         prompt = ChatPromptTemplate.from_messages([
+#             ("system", system_prompt),
+#             ("human", "{input}")
+#         ])
+        
+#         question_answer_chain = create_stuff_documents_chain(llm, prompt)
+#         rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+        
+#         user_prompt = st.text_input("Enter your query:")
+#         if user_prompt:
+#             response = rag_chain.invoke({"input": user_prompt})
+#             st.write(response["answer"])
+        
+#     except Exception as e:
+#         logging.error(f"Error: {str(e)}")
+
+
 def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), api_token=st.sidebar.text_input('API Key', type='password')):
     if not llm_api_key or not api_token:
         st.error("Please provide both the LLM API Key and the API Key.")
         return
-    
+
     try:
-        # Initialize the LLM model
+        # Connect to Milvus
+        connections.connect(alias="default", host="localhost", port="19530")
+        
+        # Initialize LLM Model
         llm = ChatAI21(
-            model="jamba-1.5-large",
-            api_key=llm_api_key,
-            max_tokens=4096,
-            temprature=0.1,
-            top_p=1,
-            stop=[]
+            model_name="jamba-1.5-large",
+            openai_api_key=llm_api_key,
+            temperature=0.1,
+            max_tokens=4096
         )
         
-        # Load document through CSVLoader
+        # Load documents from CSV
         loader = CSVLoader(csv_file, encoding="windows-1252")
         docs = loader.load()
-        
-        # Initialize HuggingFaceHubEmbeddings with the provided API token
-        embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-        
-        # Initialize FAISS vector store
-        try:
-            
-            vectorstore = FAISS.from_documents(documents=docs, embedding=embeddings)
-            retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
-        except Exception as e:
-            logging.error(f"Error initializing FAISS vector store: {str(e)}")
-            return
-        
-        # Preparing Prompt for Q/A
+
+        # Initialize HuggingFace Embeddings
+        embeddings = HuggingFaceEmbeddings()
+
+        # Define collection name
+        collection_name = "documents"
+
+        # Initialize Milvus vector store
+        vectorstore = Milvus(
+            embedding_function=embeddings,
+            collection_name=collection_name,
+            connection_args={"host": "localhost", "port": "19530"}
+        )
+
+        # Insert documents into Milvus
+        vectorstore.add_documents(docs)
+
+        # Create retriever
+        retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={'k': 20})
+
+        # Define prompt
         system_prompt = (
             "You are an assistant for question-answering tasks. "
             "Use the following pieces of retrieved context to answer "
-            "the question. If you don't know the answer, say that you "
-            "don't know. Use three sentences minimum and keep the "
-            "answer concise."
+            "the question. If you don't know the answer, say that you don't know."
+            "Use three sentences minimum and keep the answer concise."
             "\n\n"
             "{context}"
         )
-        
+
         prompt = ChatPromptTemplate.from_messages([
             ("system", system_prompt),
             ("human", "{input}")
         ])
-        
+
         question_answer_chain = create_stuff_documents_chain(llm, prompt)
         rag_chain = create_retrieval_chain(retriever, question_answer_chain)
-        
+
+        # User input
         user_prompt = st.text_input("Enter your query:")
         if user_prompt:
             response = rag_chain.invoke({"input": user_prompt})
             st.write(response["answer"])
-        
+
     except Exception as e:
         logging.error(f"Error: {str(e)}")
-
-
 #  ****************** Title ****************************
 st.title('Player Performance Dashboard')
 
