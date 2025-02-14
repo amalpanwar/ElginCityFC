@@ -391,7 +391,7 @@ def standardize_and_score_football_metrics(df, metrics, weights=None):
 llm_api_key = st.sidebar.text_input('Together API Key')
 api_token = st.sidebar.text_input('API Key', type='password')
 
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 # def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), api_token=st.sidebar.text_input('API Key', type='password')):
 #     if not llm_api_key or not api_token:
@@ -750,20 +750,20 @@ if position == 'CM':
         # Loading document through loader
             loader = CSVLoader("CM_ElginFC.csv", encoding="windows-1252")
             docs = loader.load()
-            st.write("Documents loaded successfully.")
+            logging.info("Documents loaded successfully.")
   
         # Initialize HuggingFaceHubEmbeddings with the provided API token
             embedding = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-            st.write("HuggingFaceHubEmbeddings initialized successfully.")
+            logging.info("HuggingFaceHubEmbeddings initialized successfully.")
 
         # Initialize Chroma vector store
             try:
                 vectorstore = FAISS.from_documents(documents=docs, embedding=embedding)
                 retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
-                st.success("FAISS vector store initialized successfully.")
+                logging.info("FAISS vector store initialized successfully.")
             except Exception as e:
                  logging.error(f"Error initializing FAISS vector store: {str(e)}")
-                 st.error(f"Error initializing Chroma vector store: {str(e)}")
+                 # st.error(f"Error initializing Chroma vector store: {str(e)}")
         # Preparing Prompt for Q/A
             system_prompt = (
              "You are an assistant for question-answering tasks. "
