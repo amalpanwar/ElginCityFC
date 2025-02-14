@@ -414,20 +414,10 @@ def initialize_rag(csv_file, llm_api_key, api_token):
             st.write(f"Sample document structure: {vars(docs[0])}")  # Debug: View the document's attributes
 
 
-        # Initialize embeddings
-        # Extract document text content
-        document_texts = [doc.page_content for doc in docs]  # Correct way to access text
 
         # Initialize embeddings
         embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-        document_embeddings = embeddings.embed_documents(document_texts)
-
-        # Check if embeddings are nested lists (i.e., a list of lists)
-        if isinstance(document_embeddings[0], list):
-                document_embeddings = [np.array(emb, dtype=np.float32).flatten() for emb in document_embeddings]
-
-        # Fix: Create (text, embedding) tuples
-        doc_embeddings = [(doc.page_content, emb) for doc, emb in zip(docs, document_embeddings)]
+        
 
 
         
