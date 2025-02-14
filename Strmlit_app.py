@@ -18,13 +18,13 @@ import getpass
 import os
 # from dotenv import load_dotenv
 from langchain import hub
-import chromadb
+# import chromadb
 from langchain.vectorstores import Chroma
 # from langchain_community.vectorstores import Chroma
-from langchain_community.vectorstores import FAISS
+# from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 # from chromadb import Chroma
-# from langchain_chroma import Chroma
+from langchain_chroma import Chroma
 #from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
