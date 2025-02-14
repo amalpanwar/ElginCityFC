@@ -745,7 +745,7 @@ if position == 'CM':
         # Initialize the LLM model
             logging.info("Initializing LLM model...")
             llm = ChatAI21(
-            model="jamba-1.5-large",
+            model="jamba-instruct-preview",
             api_key=llm_api_key,
             max_tokens=4096,
             temperature=0.1,  # Fixed typo from `temprature` to `temperature`
