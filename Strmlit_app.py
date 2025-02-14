@@ -734,8 +734,8 @@ if position == 'CM':
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Get API Keys from UI
-    llm_api_key = st.sidebar.text_input("LLM API Key")
-    api_token = st.sidebar.text_input("API Key", type="password")
+    # llm_api_key = st.sidebar.text_input("LLM API Key")
+    # api_token = st.sidebar.text_input("API Key", type="password")
 
     if not llm_api_key or not api_token:
          st.error("Please provide both the LLM API Key and the API Key.")
@@ -807,7 +807,7 @@ if position == 'CM':
                         st.write(response.get("answer", "No answer found."))
                         logging.info("Response generated successfully.")
 
-               except Exception as e:
+                except Exception as e:
                     logging.error(f"Error initializing FAISS vector store: {str(e)}")
                     st.error(f"Error initializing FAISS vector store: {str(e)}")
 
