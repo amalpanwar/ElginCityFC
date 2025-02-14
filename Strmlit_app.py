@@ -427,9 +427,11 @@ def initialize_rag(csv_file, llm_api_key, api_token):
         # Ensure embeddings are in the correct format
         if isinstance(document_embeddings, np.ndarray):  
             document_embeddings = document_embeddings.tolist()  # Convert NumPy array to list
+
+        doc_embeddings = [(doc.page_content, emb) for doc, emb in zip(docs, document_embeddings)]
         
         # Initialize FAISS vector store (fixing unpacking issue)
-        vectorstore = FAISS.from_embeddings(document_embeddings, embeddings)
+        vectorstore = FAISS.from_embeddings(doc_embeddings, embeddings)
         retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
         st.success("✅ FAISS vector store initialized successfully.")
 
