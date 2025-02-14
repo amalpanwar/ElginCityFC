@@ -431,7 +431,7 @@ def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), a
         vectorstore = Milvus(
             embedding_function=embeddings,
             collection_name=collection_name,
-            connection_args={"host": "localhost", "port": "19530"}
+            connection_args={"host": "milvus", "port": "19530"}
         )
         logging.info("✅ Milvus vector store initialized!")
 
