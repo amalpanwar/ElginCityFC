@@ -742,7 +742,7 @@ if position == 'CM':
 #     base_url="https://api.aimlapi.com/chat/completions",
                  api_key=llm_api_key,
                  max_tokens=4096,
-                 temprature=0.1,
+                 temperature=0.1,
                  top_p=1,
                  stop=[],
                   )
@@ -759,8 +759,9 @@ if position == 'CM':
         # Initialize Chroma vector store
             try:
                 vectorstore = FAISS.from_documents(documents=docs, embedding=embedding)
-                retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
                 logging.info("FAISS vector store initialized successfully.")
+                retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
+                
             except Exception as e:
                  logging.error(f"Error initializing FAISS vector store: {str(e)}")
                  # st.error(f"Error initializing Chroma vector store: {str(e)}")
