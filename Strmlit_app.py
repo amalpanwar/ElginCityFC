@@ -327,13 +327,83 @@ def standardize_and_score_football_metrics(df, metrics, weights=None):
 # Streamlit app
 
 # ******************* RAG Pipeline for Chatting ********************************
+# def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), api_token=st.sidebar.text_input('API Key', type='password')):
+#     if not llm_api_key or not api_token:
+#         st.error("Please provide both the LLM API Key and the API Key.")
+#         return
+    
+#     try:
+#         # Initialize the LLM model
+#         llm = ChatAI21(
+#             model="jamba-1.5-large",
+#             api_key=llm_api_key,
+#             max_tokens=4096,
+#             temprature=0.1,
+#             top_p=1,
+#             stop=[]
+#         )
+        
+#         # Load document through CSVLoader
+#         loader = CSVLoader(csv_file, encoding="windows-1252")
+#         docs = loader.load()
+        
+#         # Initialize HuggingFaceHubEmbeddings with the provided API token
+#         embedding = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
+        
+#         # Initialize Chroma vector store
+#         try:
+#             client = chromadb.PersistentClient(path="./chroma_db")
+#             collection = client.get_or_create_collection("documents")
+            
+#             # Add documents to ChromaDB
+#             for i, doc in enumerate(docs):
+#                 collection.add(
+#                     ids=[str(i)],
+#                     embeddings=[embedding.embed_query(doc.page_content)],
+#                     metadatas=[{"content": doc.page_content}]
+#                 )
+            
+#             vectorstore = Chroma(client=client, collection_name="documents", embedding_function=embedding)
+#             retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
+#         except Exception as e:
+#             logging.error(f"Error initializing FAISS vector store: {str(e)}")
+#             return
+        
+#         # Preparing Prompt for Q/A
+#         system_prompt = (
+#             "You are an assistant for question-answering tasks. "
+#             "Use the following pieces of retrieved context to answer "
+#             "the question. If you don't know the answer, say that you "
+#             "don't know. Use three sentences minimum and keep the "
+#             "answer concise."
+#             "\n\n"
+#             "{context}"
+#         )
+        
+#         prompt = ChatPromptTemplate.from_messages([
+#             ("system", system_prompt),
+#             ("human", "{input}")
+#         ])
+        
+#         question_answer_chain = create_stuff_documents_chain(llm, prompt)
+#         rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+        
+#         user_prompt = st.text_input("Enter your query:")
+#         if user_prompt:
+#             response = rag_chain.invoke({"input": user_prompt})
+#             st.write(response["answer"])
+        
+#     except Exception as e:
+#         logging.error(f"Error: {str(e)}")
+
+
 def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), api_token=st.sidebar.text_input('API Key', type='password')):
     if not llm_api_key or not api_token:
         st.error("Please provide both the LLM API Key and the API Key.")
         return
     
     try:
-        # Initialize the LLM model
+        # Initialize LLM model
         llm = ChatAI21(
             model="jamba-1.5-large",
             api_key=llm_api_key,
@@ -343,56 +413,57 @@ def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), a
             stop=[]
         )
         
-        # Load document through CSVLoader
+        # Load documents from CSV
         loader = CSVLoader(csv_file, encoding="windows-1252")
         docs = loader.load()
-        
-        # Initialize HuggingFaceHubEmbeddings with the provided API token
+
+        # Initialize HuggingFaceHubEmbeddings
         embedding = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-        
-        # Initialize Chroma vector store
-        try:
-            client = chromadb.PersistentClient(path="./chroma_db")
-            collection = client.get_or_create_collection("documents")
-            
-            # Add documents to ChromaDB
-            for i, doc in enumerate(docs):
-                collection.add(
-                    ids=[str(i)],
-                    embeddings=[embedding.embed_query(doc.page_content)],
-                    metadatas=[{"content": doc.page_content}]
-                )
-            
-            vectorstore = Chroma(client=client, collection_name="documents", embedding_function=embedding)
-            retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
-        except Exception as e:
-            logging.error(f"Error initializing FAISS vector store: {str(e)}")
-            return
-        
-        # Preparing Prompt for Q/A
+
+        # Initialize ChromaDB
+        chroma_client = chromadb.PersistentClient(path="./chroma_db")
+        collection = chroma_client.get_or_create_collection("documents")
+
+        # Add documents to ChromaDB with embeddings
+        for i, doc in enumerate(docs):
+            vector = embedding.embed_query(doc.page_content)  # Generate embedding
+            collection.add(
+                ids=[str(i)],
+                embeddings=[vector],
+                metadatas=[doc.metadata],
+                documents=[doc.page_content]
+            )
+
+        # Retrieval function from ChromaDB
+        def retrieve_docs(query, k=20):
+            query_vector = embedding.embed_query(query)
+            results = collection.query(query_embeddings=[query_vector], n_results=k)
+            return [Document(page_content=res, metadata=meta) for res, meta in zip(results["documents"][0], results["metadatas"][0])]
+
+        # Define RAG prompt
         system_prompt = (
             "You are an assistant for question-answering tasks. "
             "Use the following pieces of retrieved context to answer "
-            "the question. If you don't know the answer, say that you "
-            "don't know. Use three sentences minimum and keep the "
-            "answer concise."
+            "the question. If you don't know the answer, say that you don't know."
+            "Use three sentences minimum and keep the answer concise."
             "\n\n"
             "{context}"
         )
-        
+
         prompt = ChatPromptTemplate.from_messages([
             ("system", system_prompt),
             ("human", "{input}")
         ])
-        
+
         question_answer_chain = create_stuff_documents_chain(llm, prompt)
-        rag_chain = create_retrieval_chain(retriever, question_answer_chain)
-        
+        rag_chain = create_retrieval_chain(retrieve_docs, question_answer_chain)
+
+        # User input
         user_prompt = st.text_input("Enter your query:")
         if user_prompt:
             response = rag_chain.invoke({"input": user_prompt})
             st.write(response["answer"])
-        
+
     except Exception as e:
         logging.error(f"Error: {str(e)}")
 
