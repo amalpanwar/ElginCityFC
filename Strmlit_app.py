@@ -383,6 +383,7 @@ def standardize_and_score_football_metrics(df, metrics, weights=None):
         
 #     except Exception as e:
 #         logging.error(f"Error: {str(e)}")
+
 llm_api_key = st.sidebar.text_input('LLM API Key')
 api_token = st.sidebar.text_input('API Key', type='password')
 
@@ -419,16 +420,14 @@ def initialize_rag(csv_file, llm_api_key, api_token):
 
         # Initialize embeddings
         embeddings = HuggingFaceHubEmbeddings(huggingfacehub_api_token=api_token)
-        st.success("✅ HuggingFace Embeddings initialized successfully.")
+        document_embeddings = embeddings.embed_documents(document_texts)  
 
-        # Embed documents
-        document_embeddings = embeddings.embed_documents(document_texts)  # Get embeddings
+        # Ensure embeddings are in a proper list format
+        document_embeddings = [list(map(float, emb)) for emb in document_embeddings]
 
-        # Ensure embeddings are in the correct format
-        if isinstance(document_embeddings, np.ndarray):  
-            document_embeddings = document_embeddings.tolist()  # Convert NumPy array to list
-
+        # Fix: Create (text, embedding) tuples
         doc_embeddings = [(doc.page_content, emb) for doc, emb in zip(docs, document_embeddings)]
+
         
         # Initialize FAISS vector store (fixing unpacking issue)
         vectorstore = FAISS.from_embeddings(doc_embeddings, embeddings)
