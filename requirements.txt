@@ -14,7 +14,7 @@ protobuf==3.20.0
 langchain-huggingface
 pysqlite3-binary==0.5.3
 langchain
-faiss-cpu
+faiss-cpu==1.7.4
 scipy
 seaborn
 langchain-ai21
