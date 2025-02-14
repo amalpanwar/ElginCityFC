@@ -388,9 +388,8 @@ llm_api_key = st.sidebar.text_input('LLM API Key')
 api_token = st.sidebar.text_input('API Key', type='password')
 
 def initialize_rag(csv_file, llm_api_key, api_token):
-    if not llm_api_key or not api_token:
-        st.error("❌ Please provide both the LLM API Key and the API Token.")
-        return None
+    
+        
 
     st.success("✅ API Keys provided successfully, initializing...")
 
@@ -422,7 +421,7 @@ def initialize_rag(csv_file, llm_api_key, api_token):
 
         
         # Initialize FAISS vector store (fixing unpacking issue)
-        vectorstore = FAISS.from_embeddings(doc_embeddings, embeddings)
+        vectorstore = FAISS.from_documents(documents=docs, embedding=embeddings)
         retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
         st.success("✅ FAISS vector store initialized successfully.")
 
@@ -686,7 +685,9 @@ if position == 'CM':
     st.plotly_chart(fig3)
     
     #Input field for user prompt
-    if llm_api_key and api_token:
+    if not llm_api_key or not api_token:
+        st.error("❌ Please provide both the LLM API Key and the API Token.")
+    else:
         result = initialize_rag("CM_ElginFC.csv",llm_api_key, api_token)
         if result:
             retriever, llm = result
