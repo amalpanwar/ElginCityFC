@@ -18,7 +18,8 @@ import getpass
 import os
 # from dotenv import load_dotenv
 from langchain import hub
-# from langchain.vectorstores import Chroma
+import chromadb
+from langchain.vectorstores import Chroma
 # from langchain_community.vectorstores import Chroma
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -351,7 +352,18 @@ def initialize_rag(csv_file, llm_api_key=st.sidebar.text_input('LLM API Key'), a
         
         # Initialize Chroma vector store
         try:
-            vectorstore = FAISS.from_documents(documents=docs, embedding=embedding)
+            client = chromadb.PersistentClient(path="./chroma_db")
+            collection = client.get_or_create_collection("documents")
+            
+            # Add documents to ChromaDB
+            for i, doc in enumerate(docs):
+                collection.add(
+                    ids=[str(i)],
+                    embeddings=[embedding.embed_query(doc.page_content)],
+                    metadatas=[{"content": doc.page_content}]
+                )
+            
+            vectorstore = Chroma(client=client, collection_name="documents", embedding_function=embedding)
             retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
         except Exception as e:
             logging.error(f"Error initializing FAISS vector store: {str(e)}")
