@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import numpy as np
-from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection
+# from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection
 from langchain_community.vectorstores import Milvus
 import matplotlib.pyplot as plt
 import mplcursors
