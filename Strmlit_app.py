@@ -479,7 +479,7 @@ logging.basicConfig(level=logging.DEBUG)
 #             st.write(response["answer"])
 
 #     except Exception as e:
-#         logging.error(f"❌ Error in initialize_rag: {str(e)}")
+#         logging.error(f"❌ Error in #initialize_rag: {str(e)}")
 #         st.error(f"An error occurred: {str(e)}")
 #  ****************** Title ****************************
 st.title('Player Performance Dashboard')
@@ -817,7 +817,7 @@ if position == 'CM':
         
     
     
-    # initialize_rag('CM_ElginFC.csv')
+    # #initialize_rag('CM_ElginFC.csv')
     
     
 
@@ -1050,7 +1050,7 @@ elif position == 'CB':
     st.plotly_chart(fig3)
     
 # AI model
-    initialize_rag("CB_ElginFC.csv")
+    #initialize_rag("CB_ElginFC.csv")
     
 ###################################################### Winger #############################################    
 elif position == 'Winger':
@@ -1330,7 +1330,7 @@ elif position == 'Winger':
     st.plotly_chart(fig3)
 
     # Invoke AI
-    initialize_rag("Wing_ElginFC.csv")
+    #initialize_rag("Wing_ElginFC.csv")
     
  ###################################################### Central Forward #############################################     
 elif position == 'CF':
@@ -1557,7 +1557,7 @@ elif position == 'CF':
     
     # Input field for user prompt
     # user_prompt = st.text_input("Enter your query:")
-    initialize_rag("CF_ElginFC.csv")
+    #initialize_rag("CF_ElginFC.csv")
     
 
 
@@ -1797,7 +1797,7 @@ elif position == 'GK':
     
     # Input field for user prompt
     # user_prompt = st.text_input("Enter your query:")
-    initialize_rag("GK_ElginFC.csv")
+    #initialize_rag("GK_ElginFC.csv")
     
 
 ###################################################### Full Back #############################################  
@@ -2035,7 +2035,7 @@ elif position == 'FB':
     st.plotly_chart(fig3)
     
 # AI model
-    initialize_rag("FB_ElginFC.csv")
+    #initialize_rag("FB_ElginFC.csv")
     
 
 ###################################################### Center Attacking Midfielder #############################################  
@@ -2301,5 +2301,5 @@ elif position == 'CAM':
     st.plotly_chart(fig3)
 
     # Invoke AI
-    initialize_rag("CAM_ElginFC.csv")
+    #initialize_rag("CAM_ElginFC.csv")
     
