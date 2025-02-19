@@ -4,7 +4,7 @@
 import numpy as np
 # from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection
 # from langchain_community.vectorstores import Milvus
-from langchain_qdrant import QdrantVectorStore
+# from langchain_qdrant import QdrantVectorStore
 from langchain_community.vectorstores import Qdrant
 import matplotlib.pyplot as plt
 import mplcursors
