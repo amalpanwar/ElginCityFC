@@ -22,5 +22,6 @@ mplcursors
 chromadb
 langchain-chroma
 langchain-qdrant
+Qdrant
 #pymilvus
 
