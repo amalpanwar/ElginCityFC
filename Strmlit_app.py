@@ -3,7 +3,8 @@
 
 import numpy as np
 # from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection
-from langchain_community.vectorstores import Milvus
+# from langchain_community.vectorstores import Milvus
+from langchain_qdrant import QdrantVectorStore
 import matplotlib.pyplot as plt
 import mplcursors
 import seaborn as sns
@@ -774,7 +775,7 @@ if position == 'CM':
             # Initialize FAISS vector store
                 try:
                     logging.info("Initializing FAISS vector store...")
-                    vectorstore = FAISS.from_documents(documents=docs, embedding=embedding)
+                    vectorstore = QdrantVectorStore.from_documents(documents=docs, embedding=embedding)
                     retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
                     logging.info("FAISS vector store initialized successfully.")
 
