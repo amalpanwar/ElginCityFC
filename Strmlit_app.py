@@ -39,6 +39,8 @@ from langchain_community.embeddings import HuggingFaceHubEmbeddings
 # from langchain_mistralai import ChatMistralAI
 # from langchain_together import ChatTogether
 from langchain_ai21 import ChatAI21
+from qdrant_client import QdrantClient
+from langchain_community.vectorstores import Qdrant
 # from langchain_deepseek import ChatDeepSeek
 #from unstructured.partition.xlsx import partition_xlsx
 import networkx as nx
