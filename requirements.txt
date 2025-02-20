@@ -14,13 +14,8 @@ protobuf==3.20.0
 langchain-huggingface
 pysqlite3-binary==0.5.3
 langchain
-faiss-cpu
 scipy
 seaborn
 langchain-ai21
-mplcursors
-chromadb
-langchain-chroma
 qdrant-client
-#pymilvus
 
