@@ -777,7 +777,23 @@ if position == 'CM':
             # Initialize FAISS vector store
                 try:
                     logging.info("Initializing FAISS vector store...")
-                    vectorstore = Qdrant.from_documents(documents=docs, embedding=embedding)
+                    client = QdrantClient(":memory:")  # Use in-memory Qdrant for testing. Change to a real endpoint for production.
+
+                # Create collection if not exists
+                    collection_name = "elgin_fc"
+                    client.recreate_collection(
+                         collection_name=collection_name,
+                         vectors_config=VectorParams(size=768, distance=Distance.COSINE),  # Adjust size according to the embedding model
+                              )
+                    logging.info(f"Qdrant collection '{collection_name}' initialized.")
+
+                # Load documents into Qdrant
+                    vectorstore = Qdrant.from_documents(
+                         documents=docs,
+                         embedding=embedding,
+                         client=client,
+                         collection_name=collection_name,
+                           )
                     retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
                     logging.info("FAISS vector store initialized successfully.")
 
