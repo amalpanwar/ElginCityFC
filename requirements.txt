@@ -21,6 +21,6 @@ langchain-ai21
 mplcursors
 chromadb
 langchain-chroma
-qdrant-client
+qdrant-client --no-cache-dir
 #pymilvus
 
