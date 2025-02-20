@@ -6,7 +6,7 @@ import numpy as np
 # from langchain_community.vectorstores import Milvus
 # from langchain_qdrant import QdrantVectorStore
 # from qdrant_client import QdrantClient
-from langchain_community.vectorstores import Qdrant
+# from langchain_community.vectorstores import Qdrant
 import matplotlib.pyplot as plt
 import mplcursors
 import seaborn as sns
