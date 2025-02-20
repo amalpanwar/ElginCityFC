@@ -62,7 +62,22 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 #import sqlite3
 
+import subprocess
 import streamlit as st
+
+def check_qdrant():
+    try:
+        import qdrant_client
+        st.write("✅ Qdrant-client is installed")
+    except ModuleNotFoundError:
+        st.write("❌ Qdrant-client is NOT installed")
+
+st.write("Checking installed packages...")
+installed_packages = subprocess.run(["pip", "list"], capture_output=True, text=True)
+st.text(installed_packages.stdout)
+
+check_qdrant()
+
 
 # ******************* Data Loading **************************************
 # df = pd.read_excel("CM_Elgin.xlsx")
