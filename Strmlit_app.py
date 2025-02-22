@@ -797,7 +797,7 @@ if position == 'CM':
             # Initialize FAISS vector store
                 try:
                     logging.info("Initializing FAISS vector store...")
-                    client = QdrantClient(":memory:")  # Use in-memory Qdrant for testing. Change to a real endpoint for production.
+                    client = QdrantClient(url="http://localhost:6333")  # Use in-memory Qdrant for testing. Change to a real endpoint for production.
 
                 # Create collection if not exists
                     collection_name = "elgin_fc"
