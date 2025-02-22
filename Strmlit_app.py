@@ -20,7 +20,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 # import sqlite3
 #from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, AIMessage
+# from langchain_core.messages import HumanMessage, AIMessage
 import getpass
 import os
 # from dotenv import load_dotenv
