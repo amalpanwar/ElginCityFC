@@ -811,7 +811,6 @@ if position == 'CM':
                     vectorstore = Qdrant.from_documents(
                          documents=docs,
                          embedding=embedding,
-                         client=client,
                          collection_name=collection_name,
                            )
                     retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={'k': 20, 'fetch_k': 20})
