@@ -3,10 +3,6 @@
 import subprocess
 import sys
 
-# Force re-installation of packages from requirements.txt
-subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
-
-
 import numpy as np
 # from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection
 # from langchain_community.vectorstores import Milvus
