@@ -797,7 +797,7 @@ if position == 'CM':
             # Initialize FAISS vector store
                 try:
                     logging.info("Initializing Qdrant vector store...")
-                    client = QdrantClient(url="http://localhost:6333")  # Use in-memory Qdrant for testing. Change to a real endpoint for production.
+                    client = QdrantClient(url="http://127.0.0.1:6333")  # Use in-memory Qdrant for testing. Change to a real endpoint for production.
 
                 # Create collection if not exists
                     collection_name = "elgin_fc"
@@ -846,8 +846,8 @@ if position == 'CM':
                         logging.info("Response generated successfully.")
 
                 except Exception as e:
-                    logging.error(f"Error initializing FAISS vector store: {str(e)}")
-                    st.error(f"Error initializing FAISS vector store: {str(e)}")
+                    logging.error(f"Error initializing Qdrant vector store: {str(e)}")
+                    st.error(f"Error initializing Qdrant vector store: {str(e)}")
 
         except Exception as e:
             logging.error(f"Unexpected error: {str(e)}")
