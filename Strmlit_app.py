@@ -14,7 +14,7 @@ import numpy as np
 # from qdrant_client import QdrantClient
 # from langchain_community.vectorstores import Qdrant
 import matplotlib.pyplot as plt
-import mplcursors
+# import mplcursors
 import seaborn as sns
 from scipy.stats import norm
 from math import pi
@@ -32,7 +32,7 @@ from langchain import hub
 # import chromadb
 # from langchain.vectorstores import Chroma
 # from langchain_community.vectorstores import Chroma
-from langchain_community.vectorstores import FAISS
+# from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 # from chromadb import Chroma
 # from langchain_chroma import Chroma
