@@ -2202,8 +2202,8 @@ elif position == 'CAM':
 
     # Create radar chart for selected players
     df_position2=df_filtered2.drop(columns=[ 'Team','Position','Matches played','Minutes played','Age',
-                       'Score(0-100)', 'Rank', 'Score', 'Successful dribbles, %',
-        'Accurate passes, %','Passes per 90','Accurate forward passes, %','Forward passes per 90','Key Passes','penalty area','Forward','Assists'
+                       'Score(0-100)', 'Rank', 'Score', 'Dribbles per 90','Shots per 90','Offensive duels per 90',
+        'Accurate passes, %','Passes per 90','Accurate passes per 90','Accurate forward passes, %','Forward passes per 90','Key Passes','penalty area','Forward','Assists'
         ,'Aerial duels per 90'
                                           ])
                               
