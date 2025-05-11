@@ -2081,20 +2081,20 @@ elif position == 'CAM':
     df_position = pvt_df_CAM
 
     original_metrics =[
-        'Defensive duels won per 90', 'Successful attacking actions per 90',
-       'Shots per 90', 'Successful dribbles, %',
+        'Assists per 90','Successful defensive actions per 90', 'Successful attacking actions per 90',
+       'Shots on target, %', 'Successful dribbles, %',
        'Offensive duels won, %', 'Progressive runs per 90',
-       'Received passes per 90', 'Overall Passing Skills, %']
-    weights=[0.8,1,1,1,1,1,0.8,1.2]
+       'Interceptions per 90', 'Overall Passing Skills, %','Touches in box per 90','Fouls per 90','Aerial duels won, %']
+    weights=[1.2,0.8,1,1,1,1,1,0.8,1.2,1,-1,0.9]
     #weighted_metrics = pd.DataFrame()
     
-    #df_position['Assists per 90'] = ((df_position['Assists'] / df_position['Minutes played']) * 90).round(2)
-    df_position['Defensive duels won per 90'] = df_position['Defensive duels per 90'] * (df_position['Defensive duels won, %'] / 100)
-    #df_position['Shots on Target per 90'] = df_position['Shots per 90'] * (df_position['Shots on target, %'] / 100)
-    df_position['Overall Passing Skills, %'] = (df_position['Accurate forward passes, %'] * 0.2 + 
-                                                df_position['Accurate passes to final third, %'] * 0.3
-                                                + df_position['Accurate passes to penalty area, %'] * 0.3
-                                                + df_position['Accurate progressive passes, %'] * 0.2)
+    df_position['Assists per 90'] = ((df_position['Assists'] / df_position['Minutes played']) * 90).round(2)
+    df_position['Accurate passes per 90'] = df_position['Passes per 90'] * (df_position['Accurate passes, %'] / 100)
+    df_position['Accurate Forward passes per 90'] = df_position['Forward passes per 90'] * (df_position['Accurate forward passes, %'] / 100)
+    df_position['Overall Passing Skills per 90'] = (df_position['Accurate Forward passes per 90'] * 0.2 + 
+                                                df_position['Accurate passes per 90'] * 0.2
+                                                + df_position['Passes to penalty area per 90'] * 0.3
+                                                + df_position['Key passes per 90'] * 0.3)
     
     df_position = standardize_and_score_football_metrics(df_position, original_metrics, weights)
 
@@ -2130,35 +2130,35 @@ elif position == 'CAM':
     league_avg_row = df_filtered_new[df_filtered_new['Player'] == 'League Two Average']
 
     league_avg_values = {
-    'Accurate passes, %': league_avg_row['Accurate passes, %'].values[0],
-    'Accurate passes to final third, %': league_avg_row['Accurate passes to final third, %'].values[0],
-    'Accurate passes to penalty area, %': league_avg_row['Accurate passes to penalty area, %'].values[0],
-    'Accurate progressive passes, %': league_avg_row['Accurate progressive passes, %'].values[0]
+    'Accurate passes per 90': league_avg_row['Accurate passes per 90'].values[0],
+    'Accurate Forward passes per 90': league_avg_row['Accurate Forward passes per 90'].values[0],
+    'Passes to penalty area per 90': league_avg_row['Passes to penalty area per 90'].values[0],
+    'Key passes per 90': league_avg_row['Key passes per 90'].values[0]
       }
 # get max value for X and Y to create quadrants
-    x_min, x_max = df_filtered_new['Accurate passes, %'].min(),df_filtered_new['Accurate passes, %'].max()
+    x_min, x_max = df_filtered_new['Accurate passes per 90'].min(),df_filtered_new['Accurate passes per 90'].max()
     y_max_values = {
-    'Accurate passes to final third, %': df_filtered_new['Accurate passes to final third, %'].max(),
-    'Accurate passes to penalty area, %': df_filtered_new['Accurate passes to penalty area, %'].max(),
-    'Accurate progressive passes, %': df_filtered_new['Accurate progressive passes, %'].max()
+    'Accurate Forward passes per 90': df_filtered_new['Accurate Forward passes per 90'].max(),
+    'Passes to penalty area per 90': df_filtered_new['Passes to penalty area per 90'].max(),
+    'Key passes per 90': df_filtered_new['Key passes per 90'].max()
            }
     y_min_values= {
-    'Accurate passes to final third, %': df_filtered_new['Accurate passes to final third, %'].min(),
-    'Accurate passes to penalty area, %': df_filtered_new['Accurate passes to penalty area, %'].min(),
-    'Accurate progressive passes, %': df_filtered_new['Accurate progressive passes, %'].min()
+    'Accurate Forward passes per 90': df_filtered_new['Accurate Forward passes per 90'].min(),
+    'Passes to penalty area per 90': df_filtered_new['Passes to penalty area per 90'].min(),
+    'Key passes per 90': df_filtered_new['Key passes per 90'].min()
            }
     
     df_filtered2 = df_filtered2.rename(columns={
-                                                'Accurate progressive passes, %': 'Progressive passes,%',
-                                                'Accurate passes to penalty area, %': 'pass into penalty area,%',
-                                                'Accurate passes to final third, %': 'pass into final third,%'})
+                                                'Key passes per 90': 'Key Passes',
+                                                'Passes to penalty area per 90': 'penalty area',
+                                                'Accurate Forward passes per 90': 'Forward'})
                                       
 
    
-    fig = px.scatter(df_filtered2, x='Accurate passes, %', y=['Progressive passes,%','pass into penalty area,%','pass into final third,%'], facet_col='variable',
-                 facet_col_spacing=0.08,color='Player', title='CAM Passing Skills')
+    fig = px.scatter(df_filtered2, x='Accurate passes per 90', y=['Key Passes','penalty area','Forward'], facet_col='variable',
+                 facet_col_spacing=0.08,color='Player', title='CAM Passing Skills per 90')
 
-    for i, facet_name in enumerate(['Accurate progressive passes, %','Accurate passes to penalty area, %','Accurate passes to final third, %']):
+    for i, facet_name in enumerate(['Key passes per 90','Passes to penalty area per 90','Accurate Forward passes per 90']):
         # Add horizontal line
         fig.add_shape(
         go.layout.Shape(
@@ -2178,9 +2178,9 @@ elif position == 'CAM':
         fig.add_shape(
         go.layout.Shape(
             type='line',
-            x0=league_avg_values['Accurate passes, %'],
+            x0=league_avg_values['Accurate passes per 90'],
             y0=y_min_values[facet_name],
-            x1=league_avg_values['Accurate passes, %'],
+            x1=league_avg_values['Accurate passes per 90'],
             y1=y_max_values[facet_name],
             xref=f'x{i+1}',
             yref=f'y{i+1}',
@@ -2202,9 +2202,9 @@ elif position == 'CAM':
 
     # Create radar chart for selected players
     df_position2=df_filtered2.drop(columns=[ 'Team','Position','Matches played','Minutes played','Age',
-                       'Score(0-100)', 'Rank', 'Score','Defensive duels per 90',
-       'Defensive duels won, %', 'Successful dribbles, %',
-        'Accurate passes, %','Accurate forward passes, %','Progressive passes,%','pass into penalty area,%','pass into final third,%'
+                       'Score(0-100)', 'Rank', 'Score', 'Successful dribbles, %',
+        'Accurate passes, %','Passes per 90','Accurate forward passes, %','Forward passes per 90','Key Passes','penalty area','Forward','Assists'
+        ,'Aerial duels per 90'
                                           ])
                               
     radar_fig =create_radar_chart(df_position2.set_index('Player'), players_CAM, id_column='Player', title=f'Radar Chart for Selected {position} (Default: League Average)')
@@ -2236,29 +2236,29 @@ elif position == 'CAM':
    
     league_avg_values2 = {
     'Offensive duels won, %': league_avg_row['Offensive duels won, %'].values[0],
-    'Defensive duels won, %': league_avg_row['Defensive duels won, %'].values[0],
-    'Progressive runs per 90': league_avg_row['Progressive runs per 90'].values[0],
-    'Received passes per 90': league_avg_row['Received passes per 90'].values[0]
+    'Offensive duels per 90': league_avg_row['Offensive duels per 90].values[0],
+    'xA per 90': league_avg_row['xA per 90'].values[0],
+    'Assists per 90': league_avg_row['Assists per 90'].values[0]
         
           }
 
     # calculate min, max for the quadrants
-    x_min, x_max = df_filtered_new['Offensive duels won, %'].min(), df_filtered_new['Offensive duels won, %'].max()
-    y_min, y_max = df_filtered_new['Defensive duels won, %'].min(), df_filtered_new['Defensive duels won, %'].max()
-    y_min_pro, y_max_pro = df_filtered_new['Progressive runs per 90'].min(), df_filtered_new['Progressive runs per 90'].max()
-    x_min_pas, x_max_pas = df_filtered_new['Received passes per 90'].min(), df_filtered_new['Received passes per 90'].max()
+    x_min, x_max = df_filtered_new['Offensive duels per 90'].min(), df_filtered_new['Offensive duels per 90'].max()
+    y_min, y_max = df_filtered_new['Offensive duels won, %'].min(), df_filtered_new['Offensive duels won, %'].max()
+    y_min_pro, y_max_pro = df_filtered_new['xA per 90'].min(), df_filtered_new['xA per 90'].max()
+    x_min_pas, x_max_pas = df_filtered_new['Assists per 90'].min(), df_filtered_new['Assists per 90'].max()
 
     # creating scatter plot
-    fig2 = px.scatter(df_filtered2, x='Offensive duels won, %',y='Defensive duels won, %',
-                     color='Player', title=f'{position} Offensive vs Defensive skills')
+    fig2 = px.scatter(df_filtered2, x='Offensive duels per 90',y='Offensive duels won, %',
+                     color='Player', title=f'{position} Offensive skills')
     # Adding quadrants
     fig2.add_shape(
     go.layout.Shape(
         type='line',
         x0=x_min,
-        y0=league_avg_values2['Defensive duels won, %'], 
+        y0=league_avg_values2['Offensive duels won, %'], 
         x1=x_max,
-        y1=league_avg_values2['Defensive duels won, %'],
+        y1=league_avg_values2['Offensive duels won, %'],
         line=dict(color='red', width=1, dash='dash'),
         xref='x',
         yref='y',
@@ -2268,9 +2268,9 @@ elif position == 'CAM':
     fig2.add_shape(
     go.layout.Shape(
         type='line',
-        x0=league_avg_values2['Offensive duels won, %'], 
+        x0=league_avg_values2['Offensive duels per 90'], 
         y0=y_min,
-        x1=league_avg_values2['Offensive duels won, %'],
+        x1=league_avg_values2['Offensive duels per 90'],
         y1=y_max,
         line=dict(color='blue', width=1, dash='dash'),
         xref='x',
@@ -2281,16 +2281,16 @@ elif position == 'CAM':
     fig2.update_traces(textposition='top center')
     fig2.update_traces(marker=dict(size=8))
 #Create scatter plot
-    fig22 = px.scatter(df_filtered2, x='Received passes per 90',y='Progressive runs per 90',
-                     color='Player', title=f'{position} Receive Passing vs Running ability')
+    fig22 = px.scatter(df_filtered2, x='Assists per 90',y='xA per 90',
+                     color='Player', title=f'{position} Assist Power')
     # Add quadrants
     fig22.add_shape(
     go.layout.Shape(
         type='line',
         x0=x_min_pas,
-        y0=league_avg_values2['Progressive runs per 90'], 
+        y0=league_avg_values2['xA per 90'], 
         x1=x_max_pas,
-        y1=league_avg_values2['Progressive runs per 90'],
+        y1=league_avg_values2['xA per 90'],
         line=dict(color='red', width=1, dash='dash'),
         xref='x',
         yref='y',
@@ -2300,9 +2300,9 @@ elif position == 'CAM':
     fig22.add_shape(
     go.layout.Shape(
         type='line',
-        x0=league_avg_values2['Received passes per 90'], 
+        x0=league_avg_values2['Assists per 90'], 
         y0=y_min_pro,
-        x1=league_avg_values2['Received passes per 90'],
+        x1=league_avg_values2['Assists per 90'],
         y1=y_max_pro,
         line=dict(color='blue', width=1, dash='dash'),
         xref='x',
