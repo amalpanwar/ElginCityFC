@@ -2084,7 +2084,7 @@ elif position == 'CAM':
         'Assists per 90','Successful defensive actions per 90', 'Successful attacking actions per 90',
        'Shots on target, %', 'Successful dribbles, %',
        'Offensive duels won, %', 'Progressive runs per 90',
-       'Interceptions per 90', 'Overall Passing Skills, %','Touches in box per 90','Fouls per 90','Aerial duels won, %']
+       'Interceptions per 90', 'Overall Passing Skills per 90','Touches in box per 90','Fouls per 90','Aerial duels won, %']
     weights=[1.2,0.8,1,1,1,1,1,0.8,1.2,1,-1,0.9]
     #weighted_metrics = pd.DataFrame()
     
