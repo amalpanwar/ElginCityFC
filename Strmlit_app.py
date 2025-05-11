@@ -2236,7 +2236,7 @@ elif position == 'CAM':
    
     league_avg_values2 = {
     'Offensive duels won, %': league_avg_row['Offensive duels won, %'].values[0],
-    'Offensive duels per 90': league_avg_row['Offensive duels per 90].values[0],
+    'Offensive duels per 90': league_avg_row['Offensive duels per 90'].values[0],
     'xA per 90': league_avg_row['xA per 90'].values[0],
     'Assists per 90': league_avg_row['Assists per 90'].values[0]
         
