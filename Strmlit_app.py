@@ -1380,8 +1380,8 @@ elif position == 'CF':
         'Goals per 90', 'xG per 90',
         'Accurate passes, %',
        'Accurate Pass to Penalty area','Goal threat per 90',
-       'Fouls suffered per 90','Assists per 90','xA per 90','Goal conversion, %']
-    weights=[0.8,1.5,1.2,0.8,1,1.1,0.8,1.5,1.2,1.5]
+       'Assists per 90','xA per 90','Goal conversion, %']
+    weights=[0.8,1.5,1.2,0.8,1,1.1,1.5,1.2,1.5]
     #weighted_metrics = pd.DataFrame()
     
     df_position['Offensive duels won per 90'] = df_position['Offensive duels per 90'] * (df_position['Offensive duels won, %'] / 100)
@@ -1491,8 +1491,8 @@ elif position == 'CF':
                         'Matches played', 'Minutes played','Age',
                        'Score(0-100)', 'Rank', 'Score','Goals', 'Passes to penalty area per 90', 'Accurate passes to penalty area, %',
        'Shots per 90','Shots on target, %','xG','xA','Assists',
-       'Offensive duels per 90', 'Offensive duels won, %','Shots',
-       'Fouls suffered per 90'
+       'Offensive duels per 90', 'Offensive duels won, %','Shots'
+       
                                           ])
                               
     radar_fig =create_radar_chart(df_position2.set_index('Player'), players_CF, id_column='Player', title=f'Radar Chart for Selected {position} (Default: League Average)')
