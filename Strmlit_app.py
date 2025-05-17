@@ -1387,6 +1387,7 @@ elif position == 'CF':
     df_position['Offensive duels won per 90'] = df_position['Offensive duels per 90'] * (df_position['Offensive duels won, %'] / 100)
     df_position['Shots on Target per 90'] = df_position['Shots per 90'] * (df_position['Shots on target, %'] / 100)
     df_position['Assists per 90']= ((df_position['Assists'] / df_position['Minutes played']) * 90).round(2)
+    df_position['Goals per 90']= ((df_position['Goals'] / df_position['Minutes played']) * 90).round(2)
     df_position['Accurate Pass to Penalty area']= df_position['Passes to penalty area per 90'] * (df_position['Accurate passes to penalty area, %']) / 100
     df_position['Goal threat per 90'] = 2 * ((df_position['Touches in box per 90'] + 1) * (df_position['Shots on Target per 90'] + 1)) / ((df_position['Touches in box per 90'] + 1) + (df_position['Shots on Target per 90'] + 1))
 
