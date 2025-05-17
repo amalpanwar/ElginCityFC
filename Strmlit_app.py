@@ -1580,13 +1580,13 @@ elif position == 'CF':
 
     
 
-    df_filtered2['Overall Threat Expectation'] = df_filtered2['xG per 90'] + df_filtered2['xA per 90'] + df_filtered2['Goal conversion, %']
+    df_filtered2['Overall Threat Expectation'] = df_filtered2['xG per 90'] + df_filtered2['xA per 90']
 
 # Sorting the DataFrame by 'Goals + Assists per 90', 'Goals per 90', and 'Assists per 90' in descending order
     df_filtered3 = df_filtered2.sort_values(by=['Overall Threat built'], ascending=False)
 
     # Melt the dataframe to long format for stacking
-    df_melted = df_filtered3.melt(id_vars='Player', value_vars=['Goal conversion, %', 'xG per 90','xA per 90'], var_name='Metric', value_name='Value')
+    df_melted = df_filtered3.melt(id_vars='Player', value_vars=['xG per 90','xA per 90'], var_name='Metric', value_name='Value')
 
     # Create stacked bar chart
     fig3 = px.bar(df_melted, x='Value', y='Player', color='Metric', orientation='h', title=f'{position} Attacking Expectation')
