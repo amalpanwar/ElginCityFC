@@ -1377,11 +1377,11 @@ elif position == 'CF':
 
     original_metrics =[
        'Offensive duels won per 90',
-       'Successful attacking actions per 90', 'Goals per 90', 'xG per 90',
+        'Goals per 90', 'xG per 90',
         'Accurate passes, %',
        'Accurate Pass to Penalty area','Goal threat per 90',
        'Fouls suffered per 90','Assists per 90','xA per 90','Goal conversion, %']
-    weights=[0.8,1,1.5,1.2,0.8,1,1.1,0.8,1.5,1.2,1.5]
+    weights=[0.8,1.5,1.2,0.8,1,1.1,0.8,1.5,1.2,1.5]
     #weighted_metrics = pd.DataFrame()
     
     df_position['Offensive duels won per 90'] = df_position['Offensive duels per 90'] * (df_position['Offensive duels won, %'] / 100)
@@ -1580,13 +1580,13 @@ elif position == 'CF':
 
     
 
-    df_filtered2['Overall Threat Expectation'] = df_filtered2['xG per 90'] + df_filtered2['xA per 90'] + df_filtered2['Successful attacking actions per 90']
+    df_filtered2['Overall Threat Expectation'] = df_filtered2['xG per 90'] + df_filtered2['xA per 90'] + df_filtered2['Goal conversion, %']
 
 # Sorting the DataFrame by 'Goals + Assists per 90', 'Goals per 90', and 'Assists per 90' in descending order
     df_filtered3 = df_filtered2.sort_values(by=['Overall Threat built'], ascending=False)
 
     # Melt the dataframe to long format for stacking
-    df_melted = df_filtered3.melt(id_vars='Player', value_vars=['Successful attacking actions per 90', 'xG per 90','xA per 90'], var_name='Metric', value_name='Value')
+    df_melted = df_filtered3.melt(id_vars='Player', value_vars=['Goal conversion, %', 'xG per 90','xA per 90'], var_name='Metric', value_name='Value')
 
     # Create stacked bar chart
     fig3 = px.bar(df_melted, x='Value', y='Player', color='Metric', orientation='h', title=f'{position} Attacking Expectation')
