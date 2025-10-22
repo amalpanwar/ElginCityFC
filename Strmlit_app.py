@@ -864,13 +864,13 @@ elif position == 'CB':
     df_position = pvt_df_CB
 
     original_metrics =[
-       'Successful defensive actions per 90', 'Defensive duels won per 90',
+       'Successful defensive actions per 90', 'Defensive duels won, %',
         'Aerial duels won per 90','PAdj Sliding tackles', 'Shots blocked per 90',
        'PAdj Interceptions', 'Fouls per 90', 'Accurate passes to final third/90','Accurate progressive passes/90']
     weights=[1,1.25,1,1,1,1,-1,0.8,0.8]
     weighted_metrics = pd.DataFrame()
     df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
-    df_position['Defensive duels won per 90'] = df_position['Defensive duels per 90'] * (df_position['Defensive duels won, %'] / 100)
+    #df_position['Defensive duels won per 90'] = df_position['Defensive duels per 90'] * (df_position['Defensive duels won, %'] / 100)
     df_position['Accurate passes to final third/90'] = df_position['Passes to final third per 90'] * (df_position['Accurate passes to final third, %'] / 100)
     df_position['Accurate progressive passes/90'] = df_position['Progressive passes per 90'] * (df_position['Accurate progressive passes, %'] / 100)
     
@@ -972,7 +972,7 @@ elif position == 'CB':
 
     # Create radar chart for selected players
     df_position2=df_filtered2.drop(columns=[ 'Score','Score(0-100)','Rank','Team','Position','Age',
-                        'Matches played','Minutes played','Defensive duels per 90', 'Defensive duels won, %',
+                        'Matches played','Minutes played',
        'Aerial duels per 90', 'Aerial duels won, %', 'Passes to final third per 90',
        'Accurate passes to final third, %', 'Progressive passes per 90',
        'Accurate progressive passes, %'])
@@ -1004,12 +1004,12 @@ elif position == 'CB':
 
     # league_avg_row2 = df_filtered_new[df_filtered_new['Player'] == 'League Two Average']
     league_avg_values2 = {
-    'Defensive duels per 90': league_avg_row['Defensive duels per 90'].values[0],
+    'Defensive duels won, %': league_avg_row['Defensive duels won, %'].values[0],
     'Accurate passes to final third/90': league_avg_row['Accurate passes to final third/90'].values[0],
     'Accurate progressive passes/90': league_avg_row['Accurate progressive passes/90'].values[0],
     'Fouls per 90': league_avg_row['Fouls per 90'].values[0],
           }
-    x_max = df_filtered_new['Defensive duels per 90'].max()
+    x_max = df_filtered_new['Defensive duels won, %'].max()
     y_max_values = {
     'Accurate passes to final third/90': df_filtered_new['Accurate passes to final third/90'].max(),
     'Accurate progressive passes/90': df_filtered_new['Accurate progressive passes/90'].max(),
@@ -1021,7 +1021,7 @@ elif position == 'CB':
     'Fouls per 90': df_filtered_new['Fouls per 90'].min()
            }
 
-    fig2 = px.scatter(df_filtered2, x='Defensive duels per 90', y=['Accurate passes to final third/90','Accurate progressive passes/90','Fouls per 90'],facet_col='variable',
+    fig2 = px.scatter(df_filtered2, x='Defensive duels won, %', y=['Accurate passes to final third/90','Accurate progressive passes/90','Fouls per 90'],facet_col='variable',
                  facet_col_spacing=0.08,color='Player', title=f'{position} with Progressive ability and Fouls Committed')
   
     for i, facet_name in enumerate(['Accurate passes to final third/90','Accurate progressive passes/90','Fouls per 90']):
@@ -1044,9 +1044,9 @@ elif position == 'CB':
         fig2.add_shape(
         go.layout.Shape(
             type='line',
-            x0=league_avg_values2['Defensive duels per 90'],
+            x0=league_avg_values2['Defensive duels won, %'],
             y0=y_min_values[facet_name],
-            x1=league_avg_values2['Defensive duels per 90'],
+            x1=league_avg_values2['Defensive duels won, %'],
             y1=y_max_values[facet_name],
             xref=f'x{i+1}',
             yref=f'y{i+1}',
