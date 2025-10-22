@@ -1,7 +1,8 @@
-Player,Minutes played,Successful defensive actions per 90,"Defensive duels won, %",Aerial duels per 90,"Aerial duels won, %",PAdj Sliding tackles,Shots blocked per 90,PAdj Interceptions,Fouls per 90,Yellow cards per 90,Progressive runs per 90,Passes per 90,"Accurate passes, %",Forward passes per 90,Passes to final third per 90,"Accurate passes to final third, %",Progressive passes per 90,"Accurate progressive passes, %"
+Player,Team,Position,Age,Matches played,Minutes played,Successful defensive actions per 90,"Defensive duels won, %",Aerial duels per 90,"Aerial duels won, %",PAdj Sliding tackles,Shots blocked per 90,PAdj Interceptions,Fouls per 90,Yellow cards per 90,Progressive runs per 90,Passes per 90,"Accurate passes, %",Forward passes per 90,Passes to final third per 90,"Accurate passes to final third, %",Progressive passes per 90,"Accurate progressive passes, %"
 B. Cameron,Elgin City,"RCB, RDMF",33,,2125,11.77,67.08,4.36,58.25,0.96,0.47,8.64,0.97,0.08,0.59,41.25,79.47,20.5,7.67,60.22,9.49,68.75
 J. Dolzanski,Elgin City,"CB, RCB, LCB",26,,1711,10.73,69.83,9.21,61.71,0.78,0.89,7.92,0.89,0.26,0.11,31.46,78.6,16.36,3.37,40.63,6.63,56.35
 R. Draper,Elgin City,"RCB, CB",36,,860,11.83,71.23,3.56,50,0.26,1.15,7.56,1.26,0.52,0.52,33.49,75,19.15,6.49,53.23,9.73,65.59
 J. Murray,Elgin City,LCB,24,,2231,9.24,78.85,8.51,72.99,0.1,0.52,7.6,0.81,0.28,1.09,37.8,70.76,22.83,8.27,43.9,12.3,63.93
 D. Larkin,,CB,,,2872,11.69,71.43,8.24,62.74,0.68,1,8.57,1.07,0.31,0.47,50.61,80.43,22.25,7.9,44.84,10.28,61.28
 League Two Average,,,26,17,1490,10,71.79,7.57,60.39,0.34,0.58,8.26,0.94,0.29,0.5,,,,5.6,50.49,8.44,57.91
+
