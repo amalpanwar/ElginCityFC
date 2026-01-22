@@ -1022,7 +1022,7 @@ elif position == 'CB':
     'Fouls per 90': df_filtered_new['Fouls per 90'].min()
            }
 
-    fig2 = px.scatter(df_filtered2, x='Defensive duels won, %', y=['ccurate forward passes, %','Accurate long passes, %','Fouls per 90'],facet_col='variable',
+    fig2 = px.scatter(df_filtered2, x='Defensive duels won, %', y=['Accurate forward passes, %','Accurate long passes, %','Fouls per 90'],facet_col='variable',
                  facet_col_spacing=0.08,color='Player', title=f'{position} with Progressive ability and Fouls Committed')
   
     for i, facet_name in enumerate(['Accurate forward passes, %','Accurate long passes, %','Fouls per 90']):
