@@ -1,8 +1,8 @@
-Player,Team,Position,Age,Matches played,Minutes played,Successful defensive actions per 90,"Defensive duels won, %",Aerial duels per 90,"Aerial duels won, %",PAdj Sliding tackles,Shots blocked per 90,PAdj Interceptions,Fouls per 90,Yellow cards per 90,Progressive runs per 90,Passes per 90,"Accurate passes, %",Forward passes per 90,Passes to final third per 90,"Accurate passes to final third, %",Progressive passes per 90,"Accurate progressive passes, %"
-B. Cameron,Elgin City,"RCB, RDMF",33,,2125,11.77,67.08,4.36,58.25,0.96,0.47,8.64,0.97,0.08,0.59,41.25,79.47,20.5,7.67,60.22,9.49,68.75
-J. Dolzanski,Elgin City,"CB, RCB, LCB",26,,1711,10.73,69.83,9.21,61.71,0.78,0.89,7.92,0.89,0.26,0.11,31.46,78.6,16.36,3.37,40.63,6.63,56.35
-R. Draper,Elgin City,"RCB, CB",36,,860,11.83,71.23,3.56,50,0.26,1.15,7.56,1.26,0.52,0.52,33.49,75,19.15,6.49,53.23,9.73,65.59
-J. Murray,Elgin City,LCB,24,,2231,9.24,78.85,8.51,72.99,0.1,0.52,7.6,0.81,0.28,1.09,37.8,70.76,22.83,8.27,43.9,12.3,63.93
-D. Larkin,,CB,,,2872,11.69,71.43,8.24,62.74,0.68,1,8.57,1.07,0.31,0.47,50.61,80.43,22.25,7.9,44.84,10.28,61.28
-League Two Average,,,26,17,1490,10,71.79,7.57,60.39,0.34,0.58,8.26,0.94,0.29,0.5,,,,5.6,50.49,8.44,57.91
+Player,Team,Position,Age,Matches played,Minutes played,Successful defensive actions per 90,Defensive duels per 90,"Defensive duels won, %",Aerial duels per 90,"Aerial duels won, %",Sliding tackles per 90,PAdj Sliding tackles,Shots blocked per 90,Interceptions per 90,PAdj Interceptions,Fouls per 90,Yellow cards,Yellow cards per 90,Red cards,Red cards per 90,Passes per 90,"Accurate passes, %",Forward passes per 90,"Accurate forward passes, %",Back passes per 90,"Accurate back passes, %",Lateral passes per 90,"Accurate lateral passes, %",Long passes per 90,"Accurate long passes, %","Average pass length, m","Average long pass length, m"
+J. Murray,Elgin City,LCB,25,24,2202,7.32,3.92,75,8.34,66.67,0.04,0.06,0.57,4.33,6.54,0.9,4,0.16,1,0.04,41.57,73.75,23.79,64.43,2.04,88,12.67,88.39,11.61,41.2,25.68,41.13
+M. Virtanen,Elgin City,"RCB, DMF, LCMF",26,18,1382,11.4,6.45,66.67,6.19,64.21,0.85,1.35,1.04,6.25,9.97,1.5,3,0.2,1,0.07,36.08,79.06,14.72,61.5,4.88,97.33,11.98,89.13,4.49,37.68,17.69,26.91
+D. Wilson,Peterhead,"RCB, RB",25,14,1009,8.47,6.33,66.2,6.87,61.04,0.27,0.42,0.45,4.01,6.31,0.62,2,0.18,0,0,27.12,77.96,12.67,66.2,2.32,96.15,8.92,92,5.8,56.92,21.55,34.61
+C. Ewan,Elgin City,RCB,20,7,491,10.26,5.32,75.86,6.42,65.71,0,0,1.28,6.23,9.27,0.73,1,0.18,0,0,34.09,78.49,15.76,59.3,3.48,100,12.1,93.94,5.13,39.29,21.65,27.81
+League Two Average,,,24,15.75,1271,9.36,5.51,70.93,6.96,64.41,0.29,0.46,0.84,5.21,8.02,0.94,2.5,0.18,0.5,0.03,34.72,77.32,16.74,62.86,3.18,95.37,11.42,90.87,6.76,43.77,21.64,32.62
+
 
