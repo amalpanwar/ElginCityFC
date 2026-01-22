@@ -866,7 +866,7 @@ elif position == 'CB':
     original_metrics =[
        'Successful defensive actions per 90', 'Defensive duels won, %',
         'Aerial duels won per 90','PAdj Sliding tackles', 'Shots blocked per 90',
-       'PAdj Interceptions', 'Fouls per 90', 'Red cards per 90','Accurate forward passes, %','Accurate long passes, %,"Accurate lateral passes, %",
+       'PAdj Interceptions', 'Fouls per 90', 'Red cards per 90','Accurate forward passes, %','Accurate long passes, %',"Accurate lateral passes, %",
         "Accurate back passes, %"]
     weights=[1,1.25,1,1,1,1,-1,-1.5,0.8,0.8,1,1]
     weighted_metrics = pd.DataFrame()
