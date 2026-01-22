@@ -870,7 +870,7 @@ elif position == 'CB':
         "Accurate back passes, %"]
     weights=[1,1.25,1,1,1,1,-1,-1.5,0.8,0.8,1,1]
     weighted_metrics = pd.DataFrame()
-    #df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
+    df_position['Aerial duels won per 90'] = df_position['Aerial duels per 90'] * (df_position['Aerial duels won, %'] / 100)
     #df_position['Defensive duels won per 90'] = df_position['Defensive duels per 90'] * (df_position['Defensive duels won, %'] / 100)
     #df_position['Accurate passes to final third/90'] = df_position['Passes to final third per 90'] * (df_position['Accurate passes to final third, %'] / 100)
     #df_position['Accurate progressive passes/90'] = df_position['Progressive passes per 90'] * (df_position['Accurate progressive passes, %'] / 100)
@@ -1069,7 +1069,7 @@ elif position == 'CB':
     
     
 
-    #df_filtered2['Aerial duels won per 90'] = df_filtered2['Aerial duels per 90'] * (df_filtered2['Aerial duels won, %'] / 100)
+    df_filtered2['Aerial duels won per 90'] = df_filtered2['Aerial duels per 90'] * (df_filtered2['Aerial duels won, %'] / 100)
 
     df_filtered2 = df_filtered2.sort_values(by='Aerial duels won per 90', ascending=False)
 
