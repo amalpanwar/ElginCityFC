@@ -1007,7 +1007,7 @@ elif position == 'CB':
     league_avg_values2 = {
     'Defensive duels won, %': league_avg_row['Defensive duels won, %'].values[0],
     'Accurate forward passes, %': league_avg_row['Accurate forward passes, %'].values[0],
-    'AAccurate long passes, %': league_avg_row['Accurate long passes, %'].values[0],
+    'Accurate long passes, %': league_avg_row['Accurate long passes, %'].values[0],
     'Fouls per 90': league_avg_row['Fouls per 90'].values[0],
           }
     x_max = df_filtered_new['Defensive duels won, %'].max()
