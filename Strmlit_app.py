@@ -976,7 +976,7 @@ elif position == 'CB':
                         'Matches played','Minutes played',
        'Aerial duels per 90', 'Aerial duels won, %', 'Yellow cards','Yellow cards per 90','Red cards','Passes per 90',
                                             "Accurate passes, %",'Forward passes per 90',"Accurate forward passes, %",'Back passes per 90'
-                                            ,'Lateral passes per 90','Long passes per 90',"Accurate long passes, %"])#"Average pass length, m","Average long pass length, m"
+                                            ,'Lateral passes per 90','Long passes per 90',"Accurate long passes, %","Average pass length, m"])#,"Average long pass length, m"
                               
     radar_fig =create_radar_chart(df_position2.set_index('Player'), players_CB, id_column='Player', title=f'Radar Chart for Selected {position} (Default: League Average)')
     st.plotly_chart(radar_fig)
